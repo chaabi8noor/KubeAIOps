@@ -1,0 +1,23 @@
+{{- if .Values.demoWorkload.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-workload
+  labels:
+    app.kubernetes.io/name: demo-workload
+    app.kubernetes.io/component: workload-generation
+    app.kubernetes.io/part-of: kubeaiops
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  type: {{ .Values.demoWorkload.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.demoWorkload.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: demo-workload
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
