@@ -1,9 +1,15 @@
 FROM python:3.12-slim
 
+ARG APP_VERSION=0.1.0
+
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
+
+LABEL org.opencontainers.image.title="capacity-api" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.vendor="KubeAIOps"
 
 RUN addgroup --system --gid 10001 app \
     && adduser --system --uid 10001 --ingroup app app

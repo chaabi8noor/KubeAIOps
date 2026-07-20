@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 *.py[cod]
 .env
+.member3-venv/
+docs/evidence/member-3/k6-smoke-summary.json
