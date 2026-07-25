@@ -1,0 +1,29 @@
+{
+  "version": "promql-v1",
+  "queries": [
+    {
+      "column": "requests_per_second",
+      "query": "sum(rate(kubeaiops_workload_requests_total{namespace=\"kubeaiops\",service=\"demo-workload\"}[5m]))"
+    },
+    {
+      "column": "p95_latency_seconds",
+      "query": "histogram_quantile(0.95, sum by (le) (rate(kubeaiops_workload_request_duration_seconds_bucket{namespace=\"kubeaiops\",service=\"demo-workload\"}[5m])))"
+    },
+    {
+      "column": "error_ratio",
+      "query": "sum(rate(kubeaiops_workload_errors_total{namespace=\"kubeaiops\",service=\"demo-workload\"}[5m])) / clamp_min(sum(rate(kubeaiops_workload_requests_total{namespace=\"kubeaiops\",service=\"demo-workload\"}[5m])), 1)"
+    },
+    {
+      "column": "replicas",
+      "query": "count(kube_pod_status_ready{namespace=\"kubeaiops\",condition=\"true\",pod=~\"demo-workload-.*\"})"
+    },
+    {
+      "column": "cpu_utilization_ratio",
+      "query": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kubeaiops\",pod=~\"demo-workload-.*\",container!=\"\"}[5m])) / clamp_min(sum(kube_pod_container_resource_limits{namespace=\"kubeaiops\",pod=~\"demo-workload-.*\",container!=\"\",resource=\"cpu\",unit=\"core\"}), 0.001)"
+    },
+    {
+      "column": "memory_working_set_bytes",
+      "query": "sum(container_memory_working_set_bytes{namespace=\"kubeaiops\",pod=~\"demo-workload-.*\",container!=\"\"})"
+    }
+  ]
+}

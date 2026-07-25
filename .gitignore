@@ -5,3 +5,7 @@ __pycache__/
 .env
 .member3-venv/
 docs/evidence/member-3/k6-smoke-summary.json
+docs/evidence/member-3/load-tests/
+docs/evidence/member-3/recovery/
+ml/capacity/data/interim/
+ml/capacity/data/raw/prometheus/
