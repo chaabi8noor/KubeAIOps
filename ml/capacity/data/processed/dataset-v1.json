@@ -3,7 +3,7 @@
   "dataset_version": "capacity-observations-v1",
   "known_limitations": [
     "The checked-in v1 dataset is deterministic synthetic starter data, not an observed production trace.",
-    "Feature windows, prediction targets, and train/test splitting are deferred to Week 4.",
+    "Feature windows, prediction targets, and train/test splitting are deferred to feature engineering.",
     "A Prometheus collection must be repeated after each real load campaign before evaluating a model."
   ],
   "pipeline_version": "1.0.0",

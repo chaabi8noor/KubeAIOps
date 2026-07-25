@@ -1,6 +1,6 @@
-# Member 3 Week 3 - load scenarios and data pipeline
+# Member 3 capacity data pipeline
 
-Week 3 completes repeatable capacity-load scenarios and produces a validated starter dataset. It does not train a model or add forecasting features; those are Week 4 work.
+This phase completes repeatable capacity-load scenarios and produces a validated starter dataset. It does not train a model or add forecasting features; those belong to the model-development phase.
 
 ## Load scenarios
 
@@ -39,9 +39,9 @@ make data-pipeline
 make data-validate
 ```
 
-The committed v1 files are deterministic scenario profiles, clearly labelled `deterministic-scenario-profile-v1`. They are suitable for proving the pipeline and tests; they must be replaced with Prometheus exports before Week 4 baseline evaluation.
+The committed v1 files are deterministic scenario profiles, clearly labelled `deterministic-scenario-profile-v1`. They are suitable for proving the pipeline and tests; they must be replaced with Prometheus exports before baseline evaluation.
 
-## Week 3 exit check
+## Completion criteria
 
 - All five load scenarios are versioned and non-interactive.
 - Every scenario produces a summary and configuration-derived report.

@@ -1,4 +1,4 @@
-# Member 3 Week 1-2 vertical skeleton
+# Member 3 platform foundation
 
 This delivery proves the local Capacity AIOps path before the forecasting model and shared platform are available:
 
@@ -19,7 +19,7 @@ demo-workload metrics -> Prometheus query and dashboard panel
 
 ## Intentionally provisional values
 
-CPU and memory limits, HPA target, HPA bounds, alert threshold, registry image, and Prometheus endpoint are configuration values, not proven production values. They are marked provisional until Week 3-4 load-test data and shared-cluster constraints are available.
+CPU and memory limits, HPA target, HPA bounds, alert threshold, registry image, and Prometheus endpoint are configuration values, not proven production values. They remain provisional until operational load data and shared-cluster constraints are available.
 
 ## Local validation
 
