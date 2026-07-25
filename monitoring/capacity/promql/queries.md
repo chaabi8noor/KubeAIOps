@@ -1,6 +1,6 @@
 # Capacity PromQL catalogue
 
-These Week 2 queries use the stable names from the Member 3 metrics contract. An empty result means that Prometheus has not scraped the matching service yet; it must not be interpreted as zero traffic or safe capacity.
+These foundation-phase queries use the stable names from the Member 3 metrics contract. An empty result means that Prometheus has not scraped the matching service yet; it must not be interpreted as zero traffic or safe capacity.
 
 | Query | Purpose | Unit | Required labels |
 | --- | --- | --- | --- |

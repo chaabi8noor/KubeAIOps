@@ -1,6 +1,6 @@
 # Capacity data pipeline
 
-Week 3 creates a reproducible dataset for the Capacity AIOps stream. The checked-in `v1` sample is deterministic scenario data; it validates the schema and pipeline without pretending to be a production trace. Replace or supplement it with exports collected from the project Prometheus instance before Week 4 baseline work.
+The data-preparation phase creates a reproducible dataset for the Capacity AIOps stream. The checked-in `v1` sample is deterministic scenario data; it validates the schema and pipeline without pretending to be a production trace. Replace or supplement it with exports collected from the project Prometheus instance before baseline model development.
 
 ## Dataset schema
 
@@ -33,4 +33,4 @@ The extractor uses `query_range`, aligns samples to timestamps, preserves absent
 
 ## Validation boundary
 
-The Week 3 validation checks field presence, duplicate timestamps, numerical ranges and units, scenario labels, interval consistency, scenario boundaries, replica alignment, and failed runs. Windowed features, targets, leakage testing, and the train/test split begin in Week 4.
+The validation scope checks field presence, duplicate timestamps, numerical ranges and units, scenario labels, interval consistency, scenario boundaries, replica alignment, and failed runs. Windowed features, targets, leakage testing, and the train/test split begin during feature engineering.

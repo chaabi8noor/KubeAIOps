@@ -1,4 +1,4 @@
-"""Contract-aligned Capacity API stub for the Week 1-2 vertical slice."""
+"""Contract-aligned Capacity API stub for the platform-foundation vertical slice."""
 
 from datetime import datetime, timezone
 import os

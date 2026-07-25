@@ -261,7 +261,7 @@ def validate_rows(rows: Sequence[Mapping[str, str]]) -> dict[str, object]:
             "scenario_boundaries": "passed",
             "replica_alignment": "passed",
             "failed_test_runs": "passed",
-            "future_data_leakage": "not_applicable_before_week_4_features",
+            "future_data_leakage": "not_applicable_before_feature_engineering",
         },
     }
 

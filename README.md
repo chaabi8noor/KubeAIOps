@@ -1,6 +1,6 @@
 # KubeAIOps
 
-## Member 3 Capacity AIOps - Week 1-3 delivery
+## Member 3 Capacity Management Service
 
 The Member 3 module provides a local, reproducible capacity-management thin slice:
 
@@ -11,6 +11,6 @@ The Member 3 module provides a local, reproducible capacity-management thin slic
 - five parameterized k6 load scenarios and a protected pod-recovery test;
 - a deterministic raw-to-processed dataset pipeline, validation report, and Prometheus extractor.
 
-Local deployment instructions are in [docs/member-3/local-deployment.md](docs/member-3/local-deployment.md). The Week 2 scope and known provisional values are documented in [docs/member-3/week-2-vertical-skeleton.md](docs/member-3/week-2-vertical-skeleton.md).
+Local deployment instructions are in [docs/member-3/local-deployment.md](docs/member-3/local-deployment.md). The platform foundation and known provisional values are documented in [docs/member-3/platform-foundation.md](docs/member-3/platform-foundation.md).
 
-Week 3 commands, data boundaries, and acceptance checks are in [docs/member-3/week-3-data-pipeline.md](docs/member-3/week-3-data-pipeline.md).
+Data-pipeline commands, boundaries, and acceptance checks are in [docs/member-3/capacity-data-pipeline.md](docs/member-3/capacity-data-pipeline.md).

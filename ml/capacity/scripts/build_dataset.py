@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Clean raw capacity observations and create the Week 3 processed dataset."""
+"""Clean raw capacity observations and create the processed capacity dataset."""
 
 from __future__ import annotations
 
@@ -70,7 +70,7 @@ def main() -> None:
             "processed_records": len(cleaned.rows),
             "known_limitations": [
                 "The checked-in v1 dataset is deterministic synthetic starter data, not an observed production trace.",
-                "Feature windows, prediction targets, and train/test splitting are deferred to Week 4.",
+                "Feature windows, prediction targets, and train/test splitting are deferred to feature engineering.",
                 "A Prometheus collection must be repeated after each real load campaign before evaluating a model.",
             ],
         },

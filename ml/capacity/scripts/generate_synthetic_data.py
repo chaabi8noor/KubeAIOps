@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create deterministic Week 3 sample observations for every load scenario."""
+"""Create deterministic sample observations for every load scenario."""
 
 from __future__ import annotations
 
