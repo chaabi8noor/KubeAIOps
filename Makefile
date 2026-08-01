@@ -13,6 +13,14 @@ DATA_DIR ?= ml/capacity/data
 RAW_DIR ?= $(DATA_DIR)/raw
 PROCESSED_DIR ?= $(DATA_DIR)/processed
 DATASET_VERSION ?= capacity-observations-v1
+FEATURE_VERSION ?= features-v1
+FEATURES_DIR ?= $(DATA_DIR)/features
+FEATURE_CONFIG ?= ml/capacity/config/features.yaml
+FEATURE_DATASET ?= $(FEATURES_DIR)/capacity-features-v1.csv
+FEATURE_METADATA ?= $(FEATURES_DIR)/features-v1-metadata.json
+BASELINE_CONFIG ?= ml/capacity/config/baseline.yaml
+REPLICA_POLICY_CONFIG ?= ml/capacity/config/replica-policy.yaml
+BASELINE_EVALUATION_DIR ?= ml/capacity/evaluation/baseline-v1
 COLLECTION_DATE ?= 2026-07-25
 SOURCE_COMMIT ?= $(shell git rev-parse --verify HEAD)
 PROMETHEUS_URL ?= http://127.0.0.1:9090
@@ -22,11 +30,11 @@ EXTRACT_END ?=
 EXTRACT_STEP ?= 30s
 RAW_EXPORT_DIR ?= $(RAW_DIR)/prometheus
 
-.PHONY: setup-test-env test helm-lint helm-template images kind-load deploy-local verify-local k6-smoke load-normal load-progressive load-spike load-sustained test-recovery data-generate data-build data-pipeline data-validate extract-prometheus
+.PHONY: setup-test-env test helm-lint helm-template images kind-load deploy-local verify-local k6-smoke load-normal load-progressive load-spike load-sustained test-recovery data-generate data-build data-pipeline data-validate extract-prometheus feature-build baseline-evaluate baseline-validation
 
 setup-test-env:
 	python3 -m venv $(CURDIR)/.member3-venv
-	$(TEST_PYTHON) -m pip install --disable-pip-version-check -r services/capacity-api/requirements-dev.txt -r services/demo-workload/requirements-dev.txt
+	$(TEST_PYTHON) -m pip install --disable-pip-version-check -r services/capacity-api/requirements-dev.txt -r services/demo-workload/requirements-dev.txt -r ml/capacity/requirements.txt
 
 test:
 	cd services/capacity-api && $(TEST_PYTHON) -m pytest -q
@@ -83,7 +91,7 @@ data-generate:
 	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/generate_synthetic_data.py --output-dir $(RAW_DIR) --source-commit $(SOURCE_COMMIT)
 
 data-build:
-	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/build_dataset.py --raw-dir $(RAW_DIR) --processed-output $(PROCESSED_DIR)/$(DATASET_VERSION).csv --validation-report $(PROCESSED_DIR)/validation-report-v1.json --version-record $(PROCESSED_DIR)/dataset-v1.json --dataset-version $(DATASET_VERSION) --collection-date $(COLLECTION_DATE) --source-commit $(SOURCE_COMMIT)
+	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/build_dataset.py --raw-dir $(RAW_DIR) --processed-output $(PROCESSED_DIR)/$(DATASET_VERSION).csv --validation-report $(PROCESSED_DIR)/validation-report-v1.json --version-record $(PROCESSED_DIR)/dataset-v1.json --dataset-version $(DATASET_VERSION) --collection-date $(COLLECTION_DATE) --source-commit $(SOURCE_COMMIT) --feature-pipeline-version $(FEATURE_VERSION)
 
 data-pipeline: data-generate data-build
 
@@ -94,3 +102,11 @@ extract-prometheus:
 	test -n "$(EXTRACT_START)" && test -n "$(EXTRACT_END)"
 	mkdir -p $(RAW_EXPORT_DIR)
 	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/extract_prometheus_metrics.py --prometheus-url $(PROMETHEUS_URL) --queries ml/capacity/config/prometheus-queries.json --start $(EXTRACT_START) --end $(EXTRACT_END) --step $(EXTRACT_STEP) --scenario $(EXTRACT_SCENARIO) --output $(RAW_EXPORT_DIR)/$(EXTRACT_SCENARIO).csv --config-output $(RAW_EXPORT_DIR)/$(EXTRACT_SCENARIO)-collection.json
+
+feature-build:
+	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/build_features.py --input $(PROCESSED_DIR)/$(DATASET_VERSION).csv --config $(FEATURE_CONFIG) --output $(FEATURE_DATASET) --metadata $(FEATURE_METADATA) --source-commit $(SOURCE_COMMIT)
+
+baseline-evaluate: feature-build
+	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/evaluate_baseline.py --features $(FEATURE_DATASET) --baseline-config $(BASELINE_CONFIG) --policy-config $(REPLICA_POLICY_CONFIG) --output-dir $(BASELINE_EVALUATION_DIR)
+
+baseline-validation: baseline-evaluate

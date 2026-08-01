@@ -33,4 +33,15 @@ The extractor uses `query_range`, aligns samples to timestamps, preserves absent
 
 ## Validation boundary
 
-The validation scope checks field presence, duplicate timestamps, numerical ranges and units, scenario labels, interval consistency, scenario boundaries, replica alignment, and failed runs. Windowed features, targets, leakage testing, and the train/test split begin during feature engineering.
+The validation scope checks field presence, duplicate timestamps, numerical ranges and units, scenario labels, interval consistency, scenario boundaries, replica alignment, and failed runs.
+
+## Feature preparation and baseline validation
+
+The feature pipeline converts validated observations into a deterministic, time-ordered table with lagged and rolling request-rate features. Forecast targets are stored at an explicit future timestamp, and the train/test split is selected by target time to prevent leakage.
+
+```bash
+make feature-build
+make baseline-evaluate
+```
+
+`config/features.yaml` controls the window, horizon, and split. `config/baseline.yaml` defines the transparent persistence baseline, while `config/replica-policy.yaml` defines bounded recommendation behaviour. The evaluation saves predictions, metrics, the exact configuration hashes, and an SVG forecast comparison under `evaluation/baseline-v1/`.

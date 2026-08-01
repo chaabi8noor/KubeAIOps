@@ -37,6 +37,7 @@ def main() -> None:
     parser.add_argument("--source-commit", default=current_commit())
     parser.add_argument("--scenario-version", default="load-scenarios-v1")
     parser.add_argument("--query-version", default="promql-v1")
+    parser.add_argument("--feature-pipeline-version", default="features-v1")
     parser.add_argument("--pipeline-version", default="1.0.0")
     args = parser.parse_args()
 
@@ -65,6 +66,7 @@ def main() -> None:
             "collection_date": args.collection_date,
             "scenario_version": args.scenario_version,
             "query_version": args.query_version,
+            "feature_pipeline_version": args.feature_pipeline_version,
             "pipeline_version": args.pipeline_version,
             "raw_inputs": [path.name for path in paths],
             "processed_records": len(cleaned.rows),
