@@ -1,43 +1,222 @@
 {
-  "annotations": {"list": []},
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Operations and alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Operational view of workload demand, forecast output, replica recommendations, Kubernetes scaling, and recovery health.",
   "editable": true,
   "panels": [
     {
-      "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
-      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []},
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "id": 1,
       "targets": [
         {
-          "expr": "sum(rate(kubeaiops_workload_requests_total{namespace=\"kubeaiops\",service=\"demo-workload\"}[5m]))",
-          "legendFormat": "demo workload",
+          "expr": "sum by (workload) (rate(kubeaiops_workload_requests_total{namespace=\"$namespace\",workload=\"$workload\"}[5m]))",
+          "legendFormat": "observed {{workload}}",
           "refId": "A"
         }
       ],
-      "title": "Incoming workload rate",
+      "title": "Observed request rate",
       "type": "timeseries"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
-      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
       "id": 2,
       "targets": [
         {
-          "expr": "kubeaiops_capacity_recommendation_gap{namespace=\"kubeaiops\",workload=\"demo-workload\"}",
-          "legendFormat": "recommendation gap",
+          "expr": "kubeaiops_capacity_forecast_requests_per_second{namespace=\"$namespace\",workload=\"$workload\"}",
+          "legendFormat": "forecast {{model_version}}",
           "refId": "A"
         }
       ],
-      "title": "Capacity recommendation gap",
+      "title": "Forecast request rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(kubeaiops_workload_request_duration_seconds_bucket{namespace=\"$namespace\",workload=\"$workload\"}[5m])))",
+          "legendFormat": "p95 latency",
+          "refId": "A"
+        }
+      ],
+      "title": "Application latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "sum(rate(kubeaiops_workload_errors_total{namespace=\"$namespace\",workload=\"$workload\"}[5m])) / clamp_min(sum(rate(kubeaiops_workload_requests_total{namespace=\"$namespace\",workload=\"$workload\"}[5m])), 1)",
+          "legendFormat": "error ratio",
+          "refId": "A"
+        }
+      ],
+      "title": "Application error ratio",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "kubeaiops_capacity_current_replicas{namespace=\"$namespace\",workload=\"$workload\"}",
+          "legendFormat": "current",
+          "refId": "A"
+        },
+        {
+          "expr": "kubeaiops_capacity_recommended_replicas{namespace=\"$namespace\",workload=\"$workload\"}",
+          "legendFormat": "recommended",
+          "refId": "B"
+        }
+      ],
+      "title": "Current and recommended replicas",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "kubeaiops_capacity_recommendation_gap{namespace=\"$namespace\",workload=\"$workload\"}",
+          "legendFormat": "recommendation gap",
+          "refId": "A"
+        },
+        {
+          "expr": "kube_horizontalpodautoscaler_status_current_replicas{namespace=\"$namespace\",horizontalpodautoscaler=\"demo-workload\"}",
+          "legendFormat": "HPA current",
+          "refId": "B"
+        },
+        {
+          "expr": "kube_horizontalpodautoscaler_status_desired_replicas{namespace=\"$namespace\",horizontalpodautoscaler=\"demo-workload\"}",
+          "legendFormat": "HPA desired",
+          "refId": "C"
+        }
+      ],
+      "title": "Recommendation gap and HPA state",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod=~\"demo-workload-.*\",container!=\"\"}[5m])) / clamp_min(sum(kube_pod_container_resource_limits{namespace=\"$namespace\",pod=~\"demo-workload-.*\",container!=\"\",resource=\"cpu\",unit=\"core\"}), 0.001)",
+          "legendFormat": "CPU utilisation",
+          "refId": "A"
+        }
+      ],
+      "title": "Workload CPU utilisation",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "id": 8,
+      "targets": [
+        {
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\",pod=~\"demo-workload-.*\",container!=\"\"})",
+          "legendFormat": "working set",
+          "refId": "A"
+        }
+      ],
+      "title": "Workload memory working set",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "id": 9,
+      "targets": [
+        {
+          "expr": "sum(rate(kubeaiops_capacity_api_requests_total{namespace=\"$namespace\",service=\"capacity-api\",status=~\"2..\"}[5m]))",
+          "legendFormat": "successful recommendations",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(kubeaiops_capacity_prediction_failures_total{namespace=\"$namespace\",workload=\"$workload\"}[5m]))",
+          "legendFormat": "prediction failures",
+          "refId": "B"
+        }
+      ],
+      "title": "Capacity service health",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+      "id": 10,
+      "targets": [
+        {
+          "expr": "count(kube_pod_status_ready{namespace=\"$namespace\",condition=\"true\",pod=~\"demo-workload-.*\"})",
+          "legendFormat": "ready workload pods",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(kubeaiops_workload_requests_total{namespace=\"$namespace\",workload=\"$workload\",scenario=\"recovery\"}[5m]))",
+          "legendFormat": "recovery traffic",
+          "refId": "B"
+        }
+      ],
+      "title": "Recovery readiness",
       "type": "timeseries"
     }
   ],
   "schemaVersion": 39,
-  "tags": ["kubeaiops", "capacity"],
-  "templating": {"list": []},
-  "time": {"from": "now-15m", "to": "now"},
-  "title": "KubeAIOps Capacity",
-  "uid": "kubeaiops-capacity",
-  "version": 1
+  "tags": ["capacity", "forecasting", "operations"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "kubeaiops", "value": "kubeaiops" },
+        "hide": 0,
+        "label": "Namespace",
+        "name": "namespace",
+        "options": [],
+        "query": "kubeaiops",
+        "type": "custom"
+      },
+      {
+        "current": { "selected": true, "text": "demo-workload", "value": "demo-workload" },
+        "hide": 0,
+        "label": "Workload",
+        "name": "workload",
+        "options": [],
+        "query": "demo-workload",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": { "from": "now-30m", "to": "now" },
+  "title": "Capacity Management Operations",
+  "uid": "capacity-management",
+  "version": 2
 }

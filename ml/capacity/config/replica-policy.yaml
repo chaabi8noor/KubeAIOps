@@ -1,0 +1,6 @@
+version: replica-policy-v1
+minimum_replicas: 1
+maximum_replicas: 6
+requests_per_second_per_replica: 30
+target_utilization: 0.7
+downscale_tolerance: 0.15

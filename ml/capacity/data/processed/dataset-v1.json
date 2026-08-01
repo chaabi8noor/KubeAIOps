@@ -1,6 +1,7 @@
 {
   "collection_date": "2026-07-25",
   "dataset_version": "capacity-observations-v1",
+  "feature_pipeline_version": "features-v1",
   "known_limitations": [
     "The checked-in v1 dataset is deterministic synthetic starter data, not an observed production trace.",
     "Feature windows, prediction targets, and train/test splitting are deferred to feature engineering.",
@@ -18,5 +19,5 @@
   ],
   "scenario_version": "load-scenarios-v1",
   "schema_version": "1.0.0",
-  "source_commit": "c60f4591599e7f739708e45b2080671e3a5e2fb1"
+  "source_commit": "189200ea971ade72f1dbc9dd0624f2b09274891e"
 }

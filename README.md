@@ -10,7 +10,10 @@ The Member 3 module provides a local, reproducible capacity-management thin slic
 - an Argo CD Application skeleton, GitHub Actions validation workflow, and k6 smoke scenario.
 - five parameterized k6 load scenarios and a protected pod-recovery test;
 - a deterministic raw-to-processed dataset pipeline, validation report, and Prometheus extractor.
+- leakage-safe forecasting features, a persistence baseline, a bounded replica policy, and saved baseline evaluation evidence.
 
 Local deployment instructions are in [docs/member-3/local-deployment.md](docs/member-3/local-deployment.md). The platform foundation and known provisional values are documented in [docs/member-3/platform-foundation.md](docs/member-3/platform-foundation.md).
 
 Data-pipeline commands, boundaries, and acceptance checks are in [docs/member-3/capacity-data-pipeline.md](docs/member-3/capacity-data-pipeline.md).
+
+Feature preparation, baseline evaluation, and recommendation-policy guidance are in [docs/member-3/capacity-forecasting-baseline.md](docs/member-3/capacity-forecasting-baseline.md).

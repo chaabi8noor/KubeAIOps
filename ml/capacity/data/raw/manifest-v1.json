@@ -47,5 +47,5 @@
   "limitation": "This checked-in starter dataset is deterministic synthetic data. Replace it with Prometheus exports before model evaluation.",
   "records_per_scenario": 40,
   "schema_version": "1.0.0",
-  "source_commit": "c60f4591599e7f739708e45b2080671e3a5e2fb1"
+  "source_commit": "189200ea971ade72f1dbc9dd0624f2b09274891e"
 }

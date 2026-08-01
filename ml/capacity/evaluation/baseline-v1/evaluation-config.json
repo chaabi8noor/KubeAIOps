@@ -1,0 +1,9 @@
+{
+  "baseline_config": "ml/capacity/config/baseline.yaml",
+  "baseline_config_sha256": "bb43229b46dd0495956c994e866020dfe32618b08ce350035ce89a90fe24cb63",
+  "features": "ml/capacity/data/features/capacity-features-v1.csv",
+  "features_sha256": "9421f7ec441c66274a5c7b037f7fe089203da06c603bfcb8c58157f3d7bf020c",
+  "policy_config": "ml/capacity/config/replica-policy.yaml",
+  "policy_config_sha256": "ec70bfde90879080573f2d90aeb365209d8cb6bf7090df5fee8b403c1cef250f",
+  "test_split": "test"
+}
