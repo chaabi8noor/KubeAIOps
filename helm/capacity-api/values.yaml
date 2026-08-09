@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: registry.example.invalid/kubeaiops/capacity-api
-  tag: "v0.1.0"
+  tag: "v0.2.0"
   pullPolicy: IfNotPresent
 
 service:
@@ -22,6 +22,16 @@ config:
   maxReplicas: "5"
   modelPath: /app/models
   logLevel: INFO
+  runtime:
+    metricsMode: configured
+    scenario: normal
+    currentRequestsPerSecond: "12.124"
+    requestRateLag1: "12.065"
+    requestRateRollingMean: "12.063"
+    cpuUtilization: "0.362"
+    p95LatencySeconds: "0.048"
+    errorRatio: "0.001"
+    currentReplicas: "2"
 
 podAnnotations:
   prometheus.io/scrape: "true"
@@ -69,6 +79,11 @@ autoscaling:
   maxReplicas: 3
   targetCPUUtilizationPercentage: 70
   scaleDownStabilizationWindowSeconds: 60
+
+availability:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
 
 demoWorkload:
   enabled: true

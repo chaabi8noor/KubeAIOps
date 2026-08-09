@@ -1,0 +1,15 @@
+{
+  "dataset_version": "capacity-observations-v1",
+  "feature_order": [
+    "current_requests_per_second",
+    "request_rate_lag_1",
+    "request_rate_rolling_mean",
+    "cpu_utilization_ratio",
+    "p95_latency_seconds",
+    "error_ratio",
+    "current_replicas"
+  ],
+  "frozen": true,
+  "model_version": "capacity-primary-v1",
+  "source_commit": "d3f6b68794f0e2198f9344144149a93032783d2d"
+}

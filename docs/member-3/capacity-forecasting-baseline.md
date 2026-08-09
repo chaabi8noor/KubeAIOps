@@ -8,13 +8,13 @@ This delivery adds a reproducible feature pipeline, a transparent persistence fo
 validated capacity observations
   -> time-ordered feature rows
   -> explicit future demand target
-  -> target-time train/test split
+  -> per-series target-time train/test split
   -> persistence forecast
   -> replica recommendation
   -> saved evaluation evidence
 ```
 
-Feature rows use the current request rate, a one-sample lag, a rolling request-rate mean, CPU utilisation, memory working set, latency, error ratio, current replicas, and scaling-event context. The target is the request rate at a configured future horizon. Feature history never crosses workload or scenario boundaries.
+Feature rows use the current request rate, a one-sample lag, a rolling request-rate mean, CPU utilisation, memory working set, latency, error ratio, current replicas, and scaling-event context. The target is the request rate at a configured future horizon. Each workload/scenario series is split by its target timestamp, so every documented scenario has unseen test data and feature history never crosses series boundaries.
 
 ## Commands
 

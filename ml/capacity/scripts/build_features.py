@@ -67,7 +67,7 @@ def main() -> None:
             "split_counts": split_counts,
             "target_horizon_steps": config.horizon_steps,
             "rolling_window_steps": config.rolling_window_steps,
-            "leakage_protection": "Training rows are selected by target timestamp, not feature timestamp.",
+            "leakage_protection": "Each workload/scenario series is split by target timestamp, not feature timestamp.",
         },
     )
 

@@ -2,5 +2,5 @@ apiVersion: v2
 name: capacity-api
 description: KubeAIOps Capacity API and its local demo-workload thin slice
 type: application
-version: 0.1.0
-appVersion: "0.1.0"
+version: 0.2.0
+appVersion: "0.2.0"

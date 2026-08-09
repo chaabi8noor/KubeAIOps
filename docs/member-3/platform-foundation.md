@@ -1,6 +1,6 @@
 # Member 3 platform foundation
 
-This delivery proves the local Capacity AIOps path before the forecasting model and shared platform are available:
+This delivery proves the local Capacity AIOps path with an artifact-backed forecasting model before shared platform values are finalized:
 
 ```text
 demo-workload metrics -> Prometheus query and dashboard panel
@@ -9,12 +9,12 @@ demo-workload metrics -> Prometheus query and dashboard panel
 
 ## Included deliverables
 
-- FastAPI Capacity API stub with contract-shaped recommendations, health endpoints, and the full initial Capacity API metric catalogue.
+- FastAPI Capacity API with frozen-model startup validation, contract-shaped recommendations, health endpoints, and the Capacity API metric catalogue.
 - Instrumented demo workload with bounded scenario labels and a repeatable `/work` endpoint.
 - Non-root Docker images with version labels and health checks.
 - `helm/capacity-api`, which deploys the Capacity API and the demo workload for local validation, including probes, resources, ConfigMap configuration, ServiceAccount, and CPU HPAs.
 - PromQL catalogue, recording-rule draft, and the first Grafana dashboard panel set.
-- Argo CD Application skeleton and GitHub Actions validation workflow.
+- GitLab CI validation, container scanning, and Argo CD project/application definitions.
 - A short k6 smoke test that checks the Capacity API and applies controlled normal load to the demo workload.
 
 ## Intentionally provisional values

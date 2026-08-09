@@ -5,7 +5,7 @@
   "leakage_protection": "Training rows are selected by target timestamp, not feature timestamp.",
   "output_rows": 180,
   "rolling_window_steps": 3,
-  "source_commit": "189200ea971ade72f1dbc9dd0624f2b09274891e",
+  "source_commit": "d3f6b68794f0e2198f9344144149a93032783d2d",
   "source_dataset": "ml/capacity/data/processed/capacity-observations-v1.csv",
   "source_dataset_sha256": "345091a8d845c9d089e0451b44627486f920c95ea00461545db6fb3a2492f361",
   "split_counts": {

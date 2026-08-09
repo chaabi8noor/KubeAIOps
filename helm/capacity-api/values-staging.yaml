@@ -1,6 +1,6 @@
 image:
   repository: registry.gitlab.com/kubeaiops/platform/capacity-api
-  tag: v0.1.0
+  tag: v0.2.0
   pullPolicy: IfNotPresent
 
 demoWorkload:

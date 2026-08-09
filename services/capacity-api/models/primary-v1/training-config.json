@@ -1,0 +1,18 @@
+{
+  "categorical_feature_column": "scenario",
+  "fallback_feature_column": "current_requests_per_second",
+  "feature_columns": [
+    "current_requests_per_second",
+    "request_rate_lag_1",
+    "request_rate_rolling_mean",
+    "cpu_utilization_ratio",
+    "p95_latency_seconds",
+    "error_ratio",
+    "current_replicas"
+  ],
+  "maximum_normalized_distance": 1.0,
+  "method": "adaptive_nearest_neighbor",
+  "minimum_training_rows": 20,
+  "regularization": 1e-06,
+  "version": "capacity-primary-v1"
+}

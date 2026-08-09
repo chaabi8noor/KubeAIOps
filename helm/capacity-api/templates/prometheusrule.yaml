@@ -16,6 +16,7 @@ spec:
             severity: warning
             component: capacity
           annotations:
-            summary: Available capacity is below the model recommendation
-            action: Inspect traffic, HPA state, limits, and Capacity API evidence.
+            summary: Capacity remains below the model recommendation
+            description: The recommendation gap exceeded the threshold for the configured duration.
+            action: Inspect workload traffic, HPA state, resource limits, and Capacity API evidence before intervening.
 {{- end }}

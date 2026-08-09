@@ -1,0 +1,132 @@
+stages:
+  - validate
+  - test
+  - package
+  - verify
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHONPATH: "$CI_PROJECT_DIR/ml/capacity/src"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  CAPACITY_IMAGE: "$CI_REGISTRY_IMAGE/capacity-api:$CI_COMMIT_SHORT_SHA"
+  DEMO_IMAGE: "$CI_REGISTRY_IMAGE/demo-workload:$CI_COMMIT_SHORT_SHA"
+
+cache:
+  paths:
+    - .cache/pip
+
+python-validation:
+  stage: validate
+  image: python:3.12-slim
+  before_script:
+    - python -m pip install --disable-pip-version-check -r services/capacity-api/requirements-dev.txt -r services/demo-workload/requirements-dev.txt -r ml/capacity/requirements.txt
+  script:
+    - python -m compileall -q services/capacity-api/app services/demo-workload/app ml/capacity/src ml/capacity/scripts scripts/capacity
+    - python scripts/capacity/validate_configuration.py
+
+capacity-tests:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - python -m pip install --disable-pip-version-check -r services/capacity-api/requirements-dev.txt -r services/demo-workload/requirements-dev.txt -r ml/capacity/requirements.txt
+    - mkdir -p test-results
+  script:
+    - cd services/capacity-api && python -m pytest -q --junitxml=../../test-results/capacity-api.xml
+    - cd ../demo-workload && python -m pytest -q --junitxml=../../test-results/demo-workload.xml
+    - cd ../../ml/capacity && PYTHONPATH=src python -m pytest -q --junitxml=../../test-results/capacity-model.xml
+    - cd ../..
+    - python ml/capacity/scripts/build_features.py --input ml/capacity/data/processed/capacity-observations-v1.csv --config ml/capacity/config/features.yaml --output ml/capacity/data/features/capacity-features-v1.csv --metadata ml/capacity/data/features/features-v1-metadata.json --source-commit "$CI_COMMIT_SHA"
+    - python ml/capacity/scripts/evaluate_baseline.py --features ml/capacity/data/features/capacity-features-v1.csv --baseline-config ml/capacity/config/baseline.yaml --policy-config ml/capacity/config/replica-policy.yaml --output-dir ml/capacity/evaluation/baseline-v1
+    - python ml/capacity/scripts/train_primary_model.py --features ml/capacity/data/features/capacity-features-v1.csv --model-config ml/capacity/config/model.yaml --policy-config ml/capacity/config/replica-policy.yaml --baseline-metrics ml/capacity/evaluation/baseline-v1/metrics.json --artifact-dir ml/capacity/artifacts/primary-v1 --evaluation-dir ml/capacity/evaluation/primary-v1 --dataset-version capacity-observations-v1 --source-commit "$CI_COMMIT_SHA"
+  artifacts:
+    when: always
+    reports:
+      junit: test-results/*.xml
+    paths:
+      - ml/capacity/artifacts/primary-v1/
+      - ml/capacity/evaluation/primary-v1/
+      - ml/capacity/evaluation/baseline-v1/
+    expire_in: 30 days
+
+helm-validation:
+  stage: validate
+  image: alpine/helm:3.16.3
+  script:
+    - helm lint helm/capacity-api
+    - helm lint helm/capacity-api --values helm/capacity-api/values-local.yaml
+    - helm template capacity-api helm/capacity-api --namespace kubeaiops --values helm/capacity-api/values-staging.yaml > capacity-api-rendered.yaml
+    - grep -q 'kind: Deployment' capacity-api-rendered.yaml
+    - grep -q 'kind: PodDisruptionBudget' capacity-api-rendered.yaml
+    - grep -q 'kind: HorizontalPodAutoscaler' capacity-api-rendered.yaml
+    - grep -q 'kind: PrometheusRule' capacity-api-rendered.yaml
+  artifacts:
+    paths:
+      - capacity-api-rendered.yaml
+    expire_in: 30 days
+
+gitops-validation:
+  stage: validate
+  image: alpine:3.20
+  script:
+    - grep -q 'kind: Application' gitops/applications/capacity-api.yaml
+    - grep -q 'kind: AppProject' gitops/projects/kubeaiops.yaml
+    - grep -q 'repoURL: https://gitlab.com/kubeaiops/kubeaiops-platform.git' gitops/applications/capacity-api.yaml
+    - grep -q 'selfHeal: true' gitops/applications/capacity-api.yaml
+    - grep -q 'prune: true' gitops/applications/capacity-api.yaml
+
+capacity-image:
+  stage: package
+  image: docker:29.5.3-cli
+  services:
+    - name: docker:29.5.3-dind
+  script:
+    - docker login "$CI_REGISTRY" --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD"
+    - docker build --build-arg APP_VERSION=0.2.0 --tag "$CAPACITY_IMAGE" services/capacity-api
+    - docker build --build-arg APP_VERSION=0.2.0 --tag "$DEMO_IMAGE" services/demo-workload
+    - docker push "$CAPACITY_IMAGE"
+    - docker push "$DEMO_IMAGE"
+
+capacity-image-scan:
+  stage: verify
+  image: aquasec/trivy:0.57.1
+  services:
+    - name: docker:29.5.3-dind
+  needs:
+    - capacity-image
+  script:
+    - trivy image --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 --format template --template "@/contrib/gitlab.tpl" --output gl-container-scanning-report.json "$CAPACITY_IMAGE"
+  artifacts:
+    when: always
+    reports:
+      container_scanning: gl-container-scanning-report.json
+    paths:
+      - gl-container-scanning-report.json
+    expire_in: 30 days
+
+capacity-container-smoke:
+  stage: verify
+  image: docker:29.5.3-cli
+  services:
+    - name: docker:29.5.3-dind
+  needs:
+    - capacity-image
+  script:
+    - docker pull "$CAPACITY_IMAGE"
+    - docker run -d --name capacity-api-smoke -p 8000:8000 "$CAPACITY_IMAGE"
+    - until docker exec capacity-api-smoke python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=2)"; do sleep 2; done
+    - docker exec capacity-api-smoke python -c "import json, urllib.request; body=json.load(urllib.request.urlopen('http://127.0.0.1:8000/api/v1/capacity/demo-workload/recommendation')); assert body['model_version']=='capacity-primary-v1'"
+    - test "$(docker inspect --format '{{.State.Health.Status}}' capacity-api-smoke)" = healthy
+  after_script:
+    - docker logs capacity-api-smoke || true
+    - docker rm -f capacity-api-smoke || true
+
+load-test-contract:
+  stage: verify
+  image: grafana/k6:0.57.0
+  script:
+    - k6 inspect load-tests/capacity/smoke/k6-smoke.js
+    - k6 inspect load-tests/capacity/normal/k6-normal.js
+    - k6 inspect load-tests/capacity/progressive/k6-progressive.js
+    - k6 inspect load-tests/capacity/spike/k6-spike.js
+    - k6 inspect load-tests/capacity/sustained/k6-sustained.js

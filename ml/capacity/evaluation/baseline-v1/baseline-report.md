@@ -7,16 +7,17 @@ The persistence baseline forecasts the next demand sample from the latest observ
 | Metric | Value |
 | --- | ---: |
 | Test samples | 45 |
-| MAE (requests/second) | 0.0504 |
-| RMSE (requests/second) | 0.0591 |
-| MAPE (%) | 0.0938 |
-| Under-provisioned recommendations | 0 |
+| MAE (requests/second) | 0.7191 |
+| RMSE (requests/second) | 4.4644 |
+| MAPE (%) | 1.0205 |
+| Under-provisioned recommendations | 1 |
 | Over-provisioned recommendations | 0 |
 
 ## Recommendation actions
 
-- `hold`: 40
-- `scale_up`: 5
+- `hold`: 19
+- `scale_down`: 18
+- `scale_up`: 8
 
 ## Limitations
 

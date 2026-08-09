@@ -1,0 +1,8 @@
+{
+  "model_artifact": "ml/capacity/artifacts/primary-v1/model.json",
+  "model_artifact_sha256": "c3e04188124f97cceca5fca9bd44f7f4aff611f72ae915c5ac3d16d9b93bb868",
+  "model_selected_for_api": true,
+  "preprocessor_artifact": "ml/capacity/artifacts/primary-v1/preprocessor.json",
+  "preprocessor_artifact_sha256": "c9d6ae84195ce1a8c7cc50846ab83147bc272b610daa5df851b6d98e10fbae42",
+  "test_split": "test"
+}

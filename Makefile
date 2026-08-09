@@ -21,6 +21,10 @@ FEATURE_METADATA ?= $(FEATURES_DIR)/features-v1-metadata.json
 BASELINE_CONFIG ?= ml/capacity/config/baseline.yaml
 REPLICA_POLICY_CONFIG ?= ml/capacity/config/replica-policy.yaml
 BASELINE_EVALUATION_DIR ?= ml/capacity/evaluation/baseline-v1
+MODEL_CONFIG ?= ml/capacity/config/model.yaml
+MODEL_ARTIFACT_DIR ?= ml/capacity/artifacts/primary-v1
+PRIMARY_EVALUATION_DIR ?= ml/capacity/evaluation/primary-v1
+MODEL_PACKAGE_DIR ?= services/capacity-api/models/primary-v1
 COLLECTION_DATE ?= 2026-07-25
 SOURCE_COMMIT ?= $(shell git rev-parse --verify HEAD)
 PROMETHEUS_URL ?= http://127.0.0.1:9090
@@ -30,7 +34,7 @@ EXTRACT_END ?=
 EXTRACT_STEP ?= 30s
 RAW_EXPORT_DIR ?= $(RAW_DIR)/prometheus
 
-.PHONY: setup-test-env test helm-lint helm-template images kind-load deploy-local verify-local k6-smoke load-normal load-progressive load-spike load-sustained test-recovery data-generate data-build data-pipeline data-validate extract-prometheus feature-build baseline-evaluate baseline-validation
+.PHONY: setup-test-env test helm-lint helm-template images kind-load deploy-local verify-local k6-smoke load-normal load-progressive load-spike load-sustained test-recovery data-generate data-build data-pipeline data-validate extract-prometheus feature-build baseline-evaluate baseline-validation model-train model-validate package-model config-validate
 
 setup-test-env:
 	python3 -m venv $(CURDIR)/.member3-venv
@@ -49,8 +53,8 @@ helm-template:
 	helm template $(RELEASE) $(CHART) --namespace $(NAMESPACE) --values $(CHART)/values-local.yaml > /tmp/capacity-api-rendered.yaml
 
 images:
-	docker build --build-arg APP_VERSION=0.1.0 --tag kubeaiops/capacity-api:$(IMAGE_TAG) services/capacity-api
-	docker build --build-arg APP_VERSION=0.1.0 --tag kubeaiops/demo-workload:$(IMAGE_TAG) services/demo-workload
+	docker build --build-arg APP_VERSION=0.2.0 --tag kubeaiops/capacity-api:$(IMAGE_TAG) services/capacity-api
+	docker build --build-arg APP_VERSION=0.2.0 --tag kubeaiops/demo-workload:$(IMAGE_TAG) services/demo-workload
 
 kind-load: images
 	kind load docker-image kubeaiops/capacity-api:$(IMAGE_TAG) --name $(KIND_CLUSTER)
@@ -110,3 +114,14 @@ baseline-evaluate: feature-build
 	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/evaluate_baseline.py --features $(FEATURE_DATASET) --baseline-config $(BASELINE_CONFIG) --policy-config $(REPLICA_POLICY_CONFIG) --output-dir $(BASELINE_EVALUATION_DIR)
 
 baseline-validation: baseline-evaluate
+
+model-train: baseline-evaluate
+	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/train_primary_model.py --features $(FEATURE_DATASET) --model-config $(MODEL_CONFIG) --policy-config $(REPLICA_POLICY_CONFIG) --baseline-metrics $(BASELINE_EVALUATION_DIR)/metrics.json --artifact-dir $(MODEL_ARTIFACT_DIR) --evaluation-dir $(PRIMARY_EVALUATION_DIR) --dataset-version $(DATASET_VERSION) --source-commit $(SOURCE_COMMIT)
+
+model-validate: model-train
+
+package-model: model-train
+	$(TEST_PYTHON) scripts/capacity/package_model_artifacts.py --artifact-dir $(MODEL_ARTIFACT_DIR) --policy-config $(REPLICA_POLICY_CONFIG) --output-dir $(MODEL_PACKAGE_DIR)
+
+config-validate:
+	$(TEST_PYTHON) scripts/capacity/validate_configuration.py

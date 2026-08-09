@@ -1,0 +1,14 @@
+{
+  "baseline_mae": 0.7190888889,
+  "mae": 0.0272666667,
+  "mae_improvement": 0.6918222222,
+  "mape": 0.1168697125,
+  "model_version": "capacity-primary-v1",
+  "over_provisioned_samples": 0,
+  "policy_version": "replica-policy-v1",
+  "rmse": 0.0426346234,
+  "sample_count": 45,
+  "selected_for_api": true,
+  "stable_for_identical_input": true,
+  "under_provisioned_samples": 0
+}

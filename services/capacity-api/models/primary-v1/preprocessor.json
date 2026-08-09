@@ -1,0 +1,30 @@
+{
+  "feature_columns": [
+    "current_requests_per_second",
+    "request_rate_lag_1",
+    "request_rate_rolling_mean",
+    "cpu_utilization_ratio",
+    "p95_latency_seconds",
+    "error_ratio",
+    "current_replicas"
+  ],
+  "format_version": "capacity-preprocessor/v1",
+  "means": [
+    47.76591851851852,
+    47.433770370370375,
+    47.432686459259266,
+    0.5708740740740741,
+    0.10808888888888889,
+    0.008970370370370372,
+    2.9407407407407407
+  ],
+  "scales": [
+    35.03510054450723,
+    35.177945144321605,
+    34.05959333567051,
+    0.20104896877717351,
+    0.07208035296771663,
+    0.027820040935279074,
+    1.0166245015880155
+  ]
+}
