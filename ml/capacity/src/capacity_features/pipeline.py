@@ -92,12 +92,13 @@ def build_feature_rows(
         ordered = sorted(series, key=lambda row: parse_timestamp(row["timestamp"]))
         first_index = config.rolling_window_steps - 1
         last_index = len(ordered) - config.horizon_steps
+        series_rows: list[dict[str, str]] = []
         for index in range(first_index, last_index):
             current = ordered[index]
             history = ordered[index - config.rolling_window_steps + 1 : index + 1]
             target = ordered[index + config.horizon_steps]
             rate_history = [_number(row, "requests_per_second") for row in history]
-            feature_rows.append(
+            series_rows.append(
                 {
                     "timestamp": current["timestamp"],
                     "target_timestamp": target["timestamp"],
@@ -126,18 +127,22 @@ def build_feature_rows(
                     "split": "",
                 }
             )
+        split_index = max(
+            1,
+            min(len(series_rows) - 1, int(len(series_rows) * config.train_fraction)),
+        )
+        split_boundary = parse_timestamp(series_rows[split_index]["target_timestamp"])
+        for row in series_rows:
+            row["split"] = (
+                "train"
+                if parse_timestamp(row["target_timestamp"]) < split_boundary
+                else "test"
+            )
+        feature_rows.extend(series_rows)
 
     if not feature_rows:
         raise ValueError("Feature input has no rows after applying window and horizon")
     feature_rows.sort(key=lambda row: parse_timestamp(row["target_timestamp"]))
-    split_index = max(1, min(len(feature_rows) - 1, int(len(feature_rows) * config.train_fraction)))
-    split_boundary = parse_timestamp(feature_rows[split_index]["target_timestamp"])
-    for row in feature_rows:
-        row["split"] = (
-            "train"
-            if parse_timestamp(row["target_timestamp"]) < split_boundary
-            else "test"
-        )
     if not any(row["split"] == "train" for row in feature_rows):
         raise ValueError("Feature split has no training rows")
     if not any(row["split"] == "test" for row in feature_rows):

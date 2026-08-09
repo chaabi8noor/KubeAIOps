@@ -37,7 +37,7 @@ The validation scope checks field presence, duplicate timestamps, numerical rang
 
 ## Feature preparation and baseline validation
 
-The feature pipeline converts validated observations into a deterministic, time-ordered table with lagged and rolling request-rate features. Forecast targets are stored at an explicit future timestamp, and the train/test split is selected by target time to prevent leakage.
+The feature pipeline converts validated observations into a deterministic, time-ordered table with lagged and rolling request-rate features. Forecast targets are stored at an explicit future timestamp, and every workload/scenario series is split by target time to prevent leakage while retaining unseen data for each scenario.
 
 ```bash
 make feature-build
@@ -45,3 +45,12 @@ make baseline-evaluate
 ```
 
 `config/features.yaml` controls the window, horizon, and split. `config/baseline.yaml` defines the transparent persistence baseline, while `config/replica-policy.yaml` defines bounded recommendation behaviour. The evaluation saves predictions, metrics, the exact configuration hashes, and an SVG forecast comparison under `evaluation/baseline-v1/`.
+
+## Primary-model evaluation
+
+```bash
+make model-validate
+make package-model
+```
+
+`config/model.yaml` defines the versioned primary model. Training produces a frozen model, preprocessor, feature order, configuration, model card, metadata, and comparison report. The comparison requires the primary model to improve on the persistence baseline before it can be packaged for the Capacity API.

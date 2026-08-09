@@ -11,3 +11,12 @@ data:
   MAX_REPLICAS: {{ .Values.config.maxReplicas | quote }}
   MODEL_PATH: {{ .Values.config.modelPath | quote }}
   LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  CAPACITY_METRICS_MODE: {{ .Values.config.runtime.metricsMode | quote }}
+  CAPACITY_SCENARIO: {{ .Values.config.runtime.scenario | quote }}
+  CAPACITY_CURRENT_REQUESTS_PER_SECOND: {{ .Values.config.runtime.currentRequestsPerSecond | quote }}
+  CAPACITY_REQUEST_RATE_LAG_1: {{ .Values.config.runtime.requestRateLag1 | quote }}
+  CAPACITY_REQUEST_RATE_ROLLING_MEAN: {{ .Values.config.runtime.requestRateRollingMean | quote }}
+  CAPACITY_CPU_UTILIZATION: {{ .Values.config.runtime.cpuUtilization | quote }}
+  CAPACITY_P95_LATENCY_SECONDS: {{ .Values.config.runtime.p95LatencySeconds | quote }}
+  CAPACITY_ERROR_RATIO: {{ .Values.config.runtime.errorRatio | quote }}
+  CAPACITY_CURRENT_REPLICAS: {{ .Values.config.runtime.currentReplicas | quote }}

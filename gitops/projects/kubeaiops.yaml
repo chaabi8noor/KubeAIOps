@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kubeaiops
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: kubeaiops
+spec:
+  description: KubeAIOps platform applications managed from GitLab.
+  sourceRepos:
+    - https://gitlab.com/kubeaiops/kubeaiops-platform.git
+  destinations:
+    - namespace: kubeaiops
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

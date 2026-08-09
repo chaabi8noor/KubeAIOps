@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-ARG APP_VERSION=0.1.0
+ARG APP_VERSION=0.2.0
 
 WORKDIR /app
 
@@ -18,6 +18,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --retries 5 --timeout 100 -r requirements.txt
 
 COPY --chown=10001:10001 app ./app
+COPY --chown=10001:10001 models ./models
 
 USER 10001:10001
 

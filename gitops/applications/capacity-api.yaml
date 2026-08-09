@@ -10,7 +10,7 @@ metadata:
 spec:
   project: kubeaiops
   source:
-    repoURL: https://github.com/chaabi8noor/KubeAIOps.git
+    repoURL: https://gitlab.com/kubeaiops/kubeaiops-platform.git
     targetRevision: member3-capacityHealth
     path: helm/capacity-api
     helm:

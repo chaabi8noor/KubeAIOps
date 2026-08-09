@@ -9,11 +9,11 @@ sys.path.insert(0, str(ROOT / "ml" / "capacity" / "src"))
 from capacity_features.pipeline import FeatureConfig, build_feature_rows
 
 
-def observation(index: int) -> dict[str, str]:
+def observation(index: int, scenario: str = "normal") -> dict[str, str]:
     return {
         "timestamp": f"2026-08-01T09:0{index}:00Z",
         "workload": "demo-workload",
-        "scenario": "normal",
+        "scenario": scenario,
         "requests_per_second": str(10 + index * 10),
         "cpu_utilization_ratio": "0.5",
         "memory_working_set_bytes": "200000000",
@@ -46,11 +46,19 @@ def test_feature_pipeline_uses_only_current_and_past_observations() -> None:
     assert rows[0]["target_timestamp"] > rows[0]["timestamp"]
 
 
-def test_feature_pipeline_splits_on_target_timestamp() -> None:
-    rows = build_feature_rows([observation(index) for index in range(8)], config())
-    training_targets = [row["target_timestamp"] for row in rows if row["split"] == "train"]
-    test_targets = [row["target_timestamp"] for row in rows if row["split"] == "test"]
+def test_feature_pipeline_splits_on_target_timestamp_for_each_series() -> None:
+    rows = build_feature_rows(
+        [
+            *[observation(index, "normal") for index in range(8)],
+            *[observation(index, "recovery") for index in range(8)],
+        ],
+        config(),
+    )
 
-    assert training_targets
-    assert test_targets
-    assert max(training_targets) < min(test_targets)
+    for scenario in ("normal", "recovery"):
+        series = [row for row in rows if row["scenario"] == scenario]
+        training_targets = [row["target_timestamp"] for row in series if row["split"] == "train"]
+        test_targets = [row["target_timestamp"] for row in series if row["split"] == "test"]
+        assert training_targets
+        assert test_targets
+        assert max(training_targets) < min(test_targets)
