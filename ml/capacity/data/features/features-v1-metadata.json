@@ -2,10 +2,10 @@
   "feature_config": "ml/capacity/config/features.yaml",
   "feature_config_sha256": "f17d867e5a188bc6194d396e7dc446f4fedcd185c6301e57bd7dc98a7eba363a",
   "feature_version": "features-v1",
-  "leakage_protection": "Training rows are selected by target timestamp, not feature timestamp.",
+  "leakage_protection": "Each workload/scenario series is split by target timestamp, not feature timestamp.",
   "output_rows": 180,
   "rolling_window_steps": 3,
-  "source_commit": "d3f6b68794f0e2198f9344144149a93032783d2d",
+  "source_commit": "5fddf671b6fd34f8a3c9a2af9ef6b0205634ab01",
   "source_dataset": "ml/capacity/data/processed/capacity-observations-v1.csv",
   "source_dataset_sha256": "345091a8d845c9d089e0451b44627486f920c95ea00461545db6fb3a2492f361",
   "split_counts": {
