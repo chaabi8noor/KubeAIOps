@@ -12,6 +12,7 @@ The Member 3 module provides a local, reproducible capacity-management thin slic
 - a deterministic raw-to-processed dataset pipeline, validation report, and Prometheus extractor.
 - leakage-safe forecasting features, a persistence baseline, a bounded replica policy, and saved baseline evaluation evidence.
 - a frozen primary forecast model, model card, artifact-backed API, image scan policy, and GitOps recovery procedure.
+- a complete validation campaign, protected resilience checks, operational runbook, peer-reproduction handover, and final demonstration guide.
 
 Local deployment instructions are in [docs/member-3/local-deployment.md](docs/member-3/local-deployment.md). The platform foundation and known provisional values are documented in [docs/member-3/platform-foundation.md](docs/member-3/platform-foundation.md).
 
@@ -20,3 +21,5 @@ Data-pipeline commands, boundaries, and acceptance checks are in [docs/member-3/
 Feature preparation, baseline evaluation, and recommendation-policy guidance are in [docs/member-3/capacity-forecasting-baseline.md](docs/member-3/capacity-forecasting-baseline.md).
 
 Primary-model selection, API runtime, CI, Helm, alerting, and GitOps guidance are in [docs/member-3/primary-model-and-gitops.md](docs/member-3/primary-model-and-gitops.md).
+
+Validation procedures and evidence expectations are in [docs/member-3/capacity-validation.md](docs/member-3/capacity-validation.md). Operations, handover, and demonstration material is in [docs/member-3/capacity-operations-runbook.md](docs/member-3/capacity-operations-runbook.md), [docs/member-3/capacity-handover.md](docs/member-3/capacity-handover.md), and [docs/member-3/capacity-demonstration.md](docs/member-3/capacity-demonstration.md).
