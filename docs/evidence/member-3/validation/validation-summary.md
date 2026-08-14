@@ -1,6 +1,6 @@
 # Capacity validation summary
 
-Source commit: `490a89b00adcfc61e3de02a8a6a9a151316e2c69`.
+Source commit: `f0d50292ae11078916dcb600ad4221efc17e671a`.
 
 This file is generated from local k6 output. It records measured results; it does not replace dashboard or alert review.
 
