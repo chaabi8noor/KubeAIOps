@@ -1,0 +1,162 @@
+{
+  "generated_at": "2026-08-14T10:17:52.060845Z",
+  "source_commit": "490a89b00adcfc61e3de02a8a6a9a151316e2c69",
+  "scenarios": [
+    {
+      "scenario": "normal",
+      "expected_result": "Controlled traffic completes without failed requests and keeps p95 latency below 1000 ms.",
+      "summary_source": "docs/evidence/member-3/load-tests/normal-summary.json",
+      "report_source": "docs/evidence/member-3/load-tests/normal-report.json",
+      "metrics": {
+        "http_request_count": 361,
+        "http_request_rate_per_second": 12.018415269064478,
+        "http_failed_request_rate": 0,
+        "http_request_duration_p95_ms": 16.30618,
+        "checks_passed": 721,
+        "checks_failed": 0
+      },
+      "stages": [
+        {
+          "name": "controlled_normal_load",
+          "target_rate_per_second": 12,
+          "duration": "30s",
+          "started_at": "2026-08-14T10:03:38.209Z"
+        }
+      ],
+      "started_at": "2026-08-14T10:03:38.209Z",
+      "status": "passed",
+      "conclusion": "All observed request and check criteria passed."
+    },
+    {
+      "scenario": "progressive",
+      "expected_result": "Traffic ramps through the configured stages while the API remains reachable.",
+      "summary_source": "docs/evidence/member-3/load-tests/progressive-summary.json",
+      "report_source": "docs/evidence/member-3/load-tests/progressive-report.json",
+      "metrics": {
+        "http_request_count": 3000,
+        "http_request_rate_per_second": 37.53885365951671,
+        "http_failed_request_rate": 0,
+        "http_request_duration_p95_ms": 14.65142555,
+        "checks_passed": 5999,
+        "checks_failed": 0
+      },
+      "stages": [
+        {
+          "name": "low",
+          "target_rate_per_second": 10,
+          "duration": "20s",
+          "started_at": "2026-08-14T10:05:00.933Z"
+        },
+        {
+          "name": "medium",
+          "target_rate_per_second": 30,
+          "duration": "20s",
+          "started_at": "2026-08-14T10:05:20.933Z"
+        },
+        {
+          "name": "high",
+          "target_rate_per_second": 60,
+          "duration": "20s",
+          "started_at": "2026-08-14T10:05:40.933Z"
+        },
+        {
+          "name": "peak",
+          "target_rate_per_second": 90,
+          "duration": "20s",
+          "started_at": "2026-08-14T10:06:00.933Z"
+        }
+      ],
+      "started_at": "2026-08-14T10:05:00.933Z",
+      "status": "passed",
+      "conclusion": "All observed request and check criteria passed."
+    },
+    {
+      "scenario": "spike",
+      "expected_result": "A transient spike completes without failed requests and returns to the configured baseline.",
+      "summary_source": "docs/evidence/member-3/load-tests/spike-summary.json",
+      "report_source": "docs/evidence/member-3/load-tests/spike-report.json",
+      "metrics": {
+        "http_request_count": 3512,
+        "http_request_rate_per_second": 50.14066227251888,
+        "http_failed_request_rate": 0,
+        "http_request_duration_p95_ms": 283.37395645,
+        "checks_passed": 7023,
+        "checks_failed": 0
+      },
+      "stages": [
+        {
+          "name": "baseline",
+          "target_rate_per_second": 12,
+          "duration": "20s",
+          "started_at": "2026-08-14T10:06:13.589Z"
+        },
+        {
+          "name": "spike",
+          "target_rate_per_second": 120,
+          "duration": "30s",
+          "started_at": "2026-08-14T10:06:33.589Z"
+        },
+        {
+          "name": "recovery",
+          "target_rate_per_second": 12,
+          "duration": "20s",
+          "started_at": "2026-08-14T10:07:03.589Z"
+        }
+      ],
+      "started_at": "2026-08-14T10:06:13.589Z",
+      "status": "passed",
+      "conclusion": "All observed request and check criteria passed."
+    },
+    {
+      "scenario": "sustained",
+      "expected_result": "High traffic remains healthy for the configured duration without latency-threshold failure.",
+      "summary_source": "docs/evidence/member-3/load-tests/sustained-summary.json",
+      "report_source": "docs/evidence/member-3/load-tests/sustained-report.json",
+      "metrics": {
+        "http_request_count": 9001,
+        "http_request_rate_per_second": 75.04737044008594,
+        "http_failed_request_rate": 0,
+        "http_request_duration_p95_ms": 11.083947,
+        "checks_passed": 18001,
+        "checks_failed": 0
+      },
+      "stages": [
+        {
+          "name": "high_stability_load",
+          "target_rate_per_second": 75,
+          "duration": "2m",
+          "started_at": "2026-08-14T10:08:15.029Z"
+        }
+      ],
+      "started_at": "2026-08-14T10:08:15.029Z",
+      "status": "passed",
+      "conclusion": "All observed request and check criteria passed."
+    },
+    {
+      "scenario": "pod-failure",
+      "expected_result": "Traffic continues while Kubernetes replaces one demo-workload pod within the recovery window.",
+      "summary_source": "docs/evidence/member-3/recovery/k6-summary.json",
+      "report_source": "docs/evidence/member-3/recovery/recovery-report.json",
+      "metrics": {
+        "http_request_count": 3601,
+        "http_request_rate_per_second": 40.03108168147948,
+        "http_failed_request_rate": 0,
+        "http_request_duration_p95_ms": 10.645519,
+        "checks_passed": 7201,
+        "checks_failed": 0
+      },
+      "stages": [],
+      "started_at": "2026-08-14T10:08:37Z",
+      "recovery": {
+        "context": "kind-kubeaiops",
+        "namespace": "kubeaiops",
+        "victim_pod": "demo-workload-5c97d7f6d6-cptlb",
+        "replacement_pod": "demo-workload-5c97d7f6d6-f2gvg",
+        "deleted_at": "2026-08-14T10:09:02Z",
+        "recovered_at": "2026-08-14T10:09:03Z"
+      },
+      "status": "passed",
+      "conclusion": "All observed request and check criteria passed."
+    }
+  ]
+}
