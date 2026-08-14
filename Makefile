@@ -6,6 +6,7 @@ CHART ?= helm/capacity-api
 IMAGE_TAG ?= dev
 BASE_URL ?= http://127.0.0.1:8001
 CAPACITY_API_URL ?= http://127.0.0.1:8000
+K6_RUNNER_PATH ?= scripts/capacity/run-k6.sh
 TEST_PYTHON ?= $(CURDIR)/.member3-venv/bin/python
 RESULTS_DIR ?= docs/evidence/member-3/load-tests
 RECOVERY_RESULTS_DIR ?= docs/evidence/member-3/recovery
@@ -34,7 +35,7 @@ EXTRACT_END ?=
 EXTRACT_STEP ?= 30s
 RAW_EXPORT_DIR ?= $(RAW_DIR)/prometheus
 
-.PHONY: setup-test-env test helm-lint helm-template images kind-load deploy-local verify-local k6-smoke load-normal load-progressive load-spike load-sustained test-recovery data-generate data-build data-pipeline data-validate extract-prometheus feature-build baseline-evaluate baseline-validation model-train model-validate package-model config-validate
+.PHONY: setup-test-env test helm-lint helm-template images kind-load deploy-local verify-local k6-smoke load-normal load-progressive load-spike load-sustained capacity-validation test-recovery test-api-resilience validation-evidence data-generate data-build data-pipeline data-validate extract-prometheus feature-build baseline-evaluate baseline-validation model-train model-validate package-model config-validate
 
 setup-test-env:
 	python3 -m venv $(CURDIR)/.member3-venv
@@ -69,27 +70,36 @@ verify-local:
 	kubectl -n $(NAMESPACE) wait --for=condition=Available deployment/demo-workload --timeout=120s
 
 k6-smoke:
-	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) k6 run --summary-export=docs/evidence/member-3/k6-smoke-summary.json load-tests/capacity/smoke/k6-smoke.js
+	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) bash $(K6_RUNNER_PATH) run --summary-export=docs/evidence/member-3/k6-smoke-summary.json load-tests/capacity/smoke/k6-smoke.js
 
 load-normal:
 	mkdir -p $(RESULTS_DIR)
-	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/normal-report.json k6 run --summary-export=$(RESULTS_DIR)/normal-summary.json load-tests/capacity/normal/k6-normal.js
+	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/normal-report.json bash $(K6_RUNNER_PATH) run --summary-export=$(RESULTS_DIR)/normal-summary.json load-tests/capacity/normal/k6-normal.js
 
 load-progressive:
 	mkdir -p $(RESULTS_DIR)
-	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/progressive-report.json k6 run --summary-export=$(RESULTS_DIR)/progressive-summary.json load-tests/capacity/progressive/k6-progressive.js
+	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/progressive-report.json bash $(K6_RUNNER_PATH) run --summary-export=$(RESULTS_DIR)/progressive-summary.json load-tests/capacity/progressive/k6-progressive.js
 
 load-spike:
 	mkdir -p $(RESULTS_DIR)
-	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/spike-report.json k6 run --summary-export=$(RESULTS_DIR)/spike-summary.json load-tests/capacity/spike/k6-spike.js
+	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/spike-report.json bash $(K6_RUNNER_PATH) run --summary-export=$(RESULTS_DIR)/spike-summary.json load-tests/capacity/spike/k6-spike.js
 
 load-sustained:
 	mkdir -p $(RESULTS_DIR)
-	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/sustained-report.json k6 run --summary-export=$(RESULTS_DIR)/sustained-summary.json load-tests/capacity/sustained/k6-sustained.js
+	BASE_URL=$(BASE_URL) CAPACITY_API_URL=$(CAPACITY_API_URL) SCENARIO_REPORT=$(RESULTS_DIR)/sustained-report.json bash $(K6_RUNNER_PATH) run --summary-export=$(RESULTS_DIR)/sustained-summary.json load-tests/capacity/sustained/k6-sustained.js
+
+capacity-validation: load-normal load-progressive load-spike load-sustained
 
 test-recovery:
 	mkdir -p $(RECOVERY_RESULTS_DIR)
-	NAMESPACE=$(NAMESPACE) RELEASE=$(RELEASE) KUBE_CONTEXT=$(KUBE_CONTEXT) RESULTS_DIR=$(RECOVERY_RESULTS_DIR) ALLOW_POD_DELETE=true bash scripts/capacity/run-recovery-test.sh
+	NAMESPACE=$(NAMESPACE) RELEASE=$(RELEASE) KUBE_CONTEXT=$(KUBE_CONTEXT) RESULTS_DIR=$(RECOVERY_RESULTS_DIR) K6_RUNNER_PATH=$(K6_RUNNER_PATH) ALLOW_POD_DELETE=true bash scripts/capacity/run-recovery-test.sh
+
+test-api-resilience:
+	mkdir -p docs/evidence/member-3/validation
+	NAMESPACE=$(NAMESPACE) KUBE_CONTEXT=$(KUBE_CONTEXT) RESULTS_DIR=docs/evidence/member-3/validation ALLOW_API_DISRUPTION=true bash scripts/capacity/run-api-resilience-test.sh
+
+validation-evidence:
+	$(TEST_PYTHON) scripts/capacity/summarize_validation_evidence.py --markdown docs/evidence/member-3/validation/validation-summary.md --output docs/evidence/member-3/validation/validation-summary.json
 
 data-generate:
 	PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) ml/capacity/scripts/generate_synthetic_data.py --output-dir $(RAW_DIR) --source-commit $(SOURCE_COMMIT)

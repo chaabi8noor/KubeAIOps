@@ -59,9 +59,11 @@ helm uninstall capacity-api --namespace kubeaiops
 
 The `CapacityRecommendationGapHigh` alert only fires after the configured sustained duration. Its action is to inspect workload demand, HPA state, resource limits, and API evidence before any operator intervention.
 
-## GitLab CI and GitOps
+## GitLab CI
 
 `.gitlab-ci.yml` validates Python and configuration files, runs API/model/policy tests, freezes a reproducible model evaluation, lints and renders Helm, builds and scans images, runs a container smoke test, and validates every k6 script. Image tags use the GitLab commit short SHA and are pushed to the project registry.
+
+## GitOps recovery procedure
 
 The Argo CD project and application are versioned under `gitops/`. After Argo CD is installed and has read access to the GitLab repository, apply and verify the managed deployment:
 

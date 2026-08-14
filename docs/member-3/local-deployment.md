@@ -5,7 +5,7 @@
 - Docker Desktop running
 - Kind cluster named `kubeaiops`
 - kubectl context `kind-kubeaiops`
-- Helm 3 and k6 installed
+- Helm and either a local k6 binary or Docker Desktop (the scenario wrapper uses a pinned k6 container when the binary is unavailable)
 
 ## Build and deploy
 
@@ -38,7 +38,7 @@ In a second terminal, run:
 make k6-smoke
 ```
 
-Expected result: k6 reports zero failed requests, and `docs/evidence/member-3/k6-smoke-summary.json` is produced locally. The summary is ignored by Git because it is run-specific evidence.
+Expected result: k6 reports zero failed requests, and `docs/evidence/member-3/k6-smoke-summary.json` is produced locally. The summary is ignored by Git because it is run-specific evidence. The Capacity API may return `hold`, `scale_up`, or `scale_down`; each is valid when the versioned response is well formed.
 
 ## Manual endpoint checks
 

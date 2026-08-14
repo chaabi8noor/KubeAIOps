@@ -13,6 +13,7 @@ export const options = {
     },
   },
   thresholds: {
+    checks: ["rate==1"],
     http_req_failed: ["rate<0.01"],
     http_req_duration: ["p(95)<1000"],
   },
@@ -23,9 +24,7 @@ export function setup() {
     `${capacityApiUrl}/api/v1/capacity/demo-workload/recommendation`,
   );
   check(response, {
-    "capacity API is reachable": (result) => result.status === 200,
-    "capacity API returns a recommendation": (result) =>
-      result.json("recommendation.action") === "hold",
+    "capacity recommendation endpoint returns 200": (result) => result.status === 200,
   });
 }
 

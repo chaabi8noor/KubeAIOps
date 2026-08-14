@@ -7,6 +7,8 @@ results_dir="${RESULTS_DIR:-docs/evidence/member-3/recovery}"
 warmup_seconds="${WARMUP_SECONDS:-25}"
 context="${KUBE_CONTEXT:-$(kubectl config current-context)}"
 selector="app.kubernetes.io/name=demo-workload,app.kubernetes.io/instance=${release}"
+repo_root="$(git rev-parse --show-toplevel)"
+k6_runner_path="${K6_RUNNER_PATH:-$repo_root/scripts/capacity/run-k6.sh}"
 
 if [[ "${ALLOW_POD_DELETE:-}" != "true" ]]; then
   echo "Set ALLOW_POD_DELETE=true to run this controlled recovery test." >&2
@@ -27,7 +29,7 @@ fi
 
 started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 SCENARIO_REPORT="$results_dir/load-report.json" \
-  k6 run --summary-export="$results_dir/k6-summary.json" load-tests/capacity/recovery/k6-recovery.js &
+  bash "$k6_runner_path" run --summary-export="$results_dir/k6-summary.json" load-tests/capacity/recovery/k6-recovery.js &
 k6_pid=$!
 
 cleanup() {
