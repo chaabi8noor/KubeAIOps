@@ -23,3 +23,5 @@ Feature preparation, baseline evaluation, and recommendation-policy guidance are
 Primary-model selection, API runtime, CI, Helm, alerting, and GitOps guidance are in [docs/member-3/primary-model-and-gitops.md](docs/member-3/primary-model-and-gitops.md).
 
 Validation procedures and evidence expectations are in [docs/member-3/capacity-validation.md](docs/member-3/capacity-validation.md). Operations, handover, and demonstration material is in [docs/member-3/capacity-operations-runbook.md](docs/member-3/capacity-operations-runbook.md), [docs/member-3/capacity-handover.md](docs/member-3/capacity-handover.md), and [docs/member-3/capacity-demonstration.md](docs/member-3/capacity-demonstration.md).
+
+Cross-stream dependencies and the exact conditions for resuming paused integration work are tracked in [docs/member-3/integration-dependency-register.md](docs/member-3/integration-dependency-register.md).
