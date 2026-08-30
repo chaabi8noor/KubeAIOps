@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: capacity-api-kind
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: capacity-api
+    app.kubernetes.io/component: capacity-management
+    app.kubernetes.io/part-of: kubeaiops
+spec:
+  project: kubeaiops
+  source:
+    repoURL: https://gitlab.com/kubeaiops/kubeaiops-platform.git
+    targetRevision: member3-capacityHealth
+    path: helm/capacity-api
+    helm:
+      valueFiles:
+        - values-local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeaiops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

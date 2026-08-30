@@ -9,6 +9,6 @@ The local Kind validation campaign was executed on 2026-08-14 against the `capac
 | Capacity API resilience | Passed | The API had no ready service endpoint during the controlled disruption, the demo workload remained available, and the API was healthy after restoration. See [capacity-api-resilience.json](capacity-api-resilience.json). |
 | Final Kubernetes state | Passed | Both Deployments were available, both HPAs were present, and the Capacity API PDB allowed no voluntary disruptions below one available pod. See [kubernetes-state.md](kubernetes-state.md). |
 | Dashboard and alert capture | Not available locally | Prometheus and Grafana were not deployed as part of this Kind environment, so no dashboard or alert evidence is claimed. |
-| GitOps recovery | Blocked | Argo CD is not installed in the local cluster. See [GitOps recovery status](../gitops/recovery-status.md). |
+| GitOps recovery | Blocked | The versioned local Argo CD Application is ready, but a dedicated Kind environment could not be created during the latest check because Docker Desktop was unavailable. See [GitOps recovery status](../gitops/recovery-status.md). |
 
 The test records use the local `kind-kubeaiops` context. They demonstrate reproducible development validation; they are not a substitute for a shared-cluster capacity assessment with production telemetry.

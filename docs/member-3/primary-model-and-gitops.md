@@ -76,3 +76,19 @@ argocd app get capacity-api
 ```
 
 The application enables pruning and self-healing. To verify drift correction, make a safe temporary change to an owned resource, inspect the `OutOfSync` state, and synchronize the application. To recover a release, select a known-good revision from `argocd app history capacity-api`, run `argocd app rollback capacity-api <revision>`, then wait for healthy synchronized status.
+
+## Local Kind GitOps rehearsal
+
+`gitops/applications/capacity-api-kind.yaml` is a separate, versioned Argo CD Application for a local Kind rehearsal. It intentionally uses `values-local.yaml`, which expects the locally built Capacity API and demo-workload images to be loaded into the `kubeaiops` Kind cluster. It does not replace the staging application.
+
+After Argo CD is installed in the dedicated local cluster, use the following sequence:
+
+```bash
+make kind-load
+kubectl apply -f gitops/projects/kubeaiops.yaml
+kubectl apply -f gitops/applications/capacity-api-kind.yaml
+argocd app wait capacity-api-kind --health --sync --timeout 300
+kubectl -n kubeaiops get deployments,services,hpa,pdb
+```
+
+This rehearsal validates the same Git source, branch, Helm chart, and automated synchronization policy as the managed deployment while avoiding an external image-registry dependency.
