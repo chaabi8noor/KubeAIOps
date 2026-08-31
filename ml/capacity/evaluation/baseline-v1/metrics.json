@@ -1,0 +1,11 @@
+{
+  "baseline_version": "persistence-baseline-v1",
+  "mae": 0.7190888889,
+  "mape": 1.0205475006,
+  "over_provisioned_samples": 0,
+  "policy_version": "replica-policy-v1",
+  "rmse": 4.4643910347,
+  "sample_count": 45,
+  "stable_for_identical_input": true,
+  "under_provisioned_samples": 1
+}

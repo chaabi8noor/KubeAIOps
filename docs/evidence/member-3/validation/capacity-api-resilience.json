@@ -1,0 +1,12 @@
+{
+  "scenario": "capacity-api-resilience",
+  "context": "kind-kubeaiops",
+  "namespace": "kubeaiops",
+  "original_replicas": 1,
+  "started_at": "2026-08-14T10:13:30Z",
+  "api_unavailable_during_disruption": true,
+  "demo_workload_available_during_disruption": true,
+  "restored_at": "2026-08-14T10:13:30Z",
+  "recovered_at": "2026-08-14T10:13:37Z",
+  "capacity_api_healthy_after_restore": true
+}

@@ -1,0 +1,16 @@
+image:
+  repository: kubeaiops/capacity-api
+  tag: dev
+  pullPolicy: Never
+
+demoWorkload:
+  image:
+    repository: kubeaiops/demo-workload
+    tag: dev
+    pullPolicy: Never
+
+monitoring:
+  serviceMonitor:
+    enabled: false
+  prometheusRule:
+    enabled: false

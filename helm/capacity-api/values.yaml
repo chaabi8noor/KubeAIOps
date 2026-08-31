@@ -1,0 +1,124 @@
+replicaCount: 1
+
+image:
+  repository: registry.example.invalid/kubeaiops/capacity-api
+  tag: "v0.2.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+serviceAccount:
+  create: true
+  name: capacity-api
+  automount: false
+
+config:
+  name: capacity-api-config
+  prometheusUrl: http://prometheus-operated.monitoring.svc:9090
+  forecastHorizonSeconds: "60"
+  minReplicas: "1"
+  maxReplicas: "5"
+  modelPath: /app/models
+  logLevel: INFO
+  runtime:
+    metricsMode: configured
+    scenario: normal
+    currentRequestsPerSecond: "12.124"
+    requestRateLag1: "12.065"
+    requestRateRollingMean: "12.063"
+    cpuUtilization: "0.362"
+    p95LatencySeconds: "0.048"
+    errorRatio: "0.001"
+    currentReplicas: "2"
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: /metrics
+  prometheus.io/port: "8000"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+probes:
+  liveness:
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 3
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+  scaleDownStabilizationWindowSeconds: 60
+
+availability:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+
+demoWorkload:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: registry.example.invalid/kubeaiops/demo-workload
+    tag: "v0.1.0"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
+    scaleDownStabilizationWindowSeconds: 60
+
+monitoring:
+  serviceMonitor:
+    enabled: false
+    interval: 15s
+    scrapeTimeout: 10s
+  prometheusRule:
+    enabled: false
+    recommendationGapThreshold: 2
+    for: 2m
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

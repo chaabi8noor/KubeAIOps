@@ -1,0 +1,22 @@
+{{- if .Values.monitoring.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: capacity-api-rules
+  labels:
+    {{- include "capacity-api.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: kubeaiops.capacity
+      rules:
+        - alert: CapacityRecommendationGapHigh
+          expr: kubeaiops_capacity_recommendation_gap > {{ .Values.monitoring.prometheusRule.recommendationGapThreshold }}
+          for: {{ .Values.monitoring.prometheusRule.for | quote }}
+          labels:
+            severity: warning
+            component: capacity
+          annotations:
+            summary: Capacity remains below the model recommendation
+            description: The recommendation gap exceeded the threshold for the configured duration.
+            action: Inspect workload traffic, HPA state, resource limits, and Capacity API evidence before intervening.
+{{- end }}

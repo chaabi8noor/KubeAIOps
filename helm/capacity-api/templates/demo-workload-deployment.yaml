@@ -1,0 +1,65 @@
+{{- if .Values.demoWorkload.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-workload
+  labels:
+    app.kubernetes.io/name: demo-workload
+    app.kubernetes.io/component: workload-generation
+    app.kubernetes.io/part-of: kubeaiops
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.demoWorkload.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: demo-workload
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: demo-workload
+        app.kubernetes.io/component: workload-generation
+        app.kubernetes.io/part-of: kubeaiops
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8000"
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: demo-workload
+          image: "{{ .Values.demoWorkload.image.repository }}:{{ .Values.demoWorkload.image.tag }}"
+          imagePullPolicy: {{ .Values.demoWorkload.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            {{- toYaml .Values.probes.liveness | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            {{- toYaml .Values.probes.readiness | nindent 12 }}
+          resources:
+            {{- toYaml .Values.demoWorkload.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+{{- end }}

@@ -1,0 +1,15 @@
+version: capacity-primary-v1
+method: adaptive_nearest_neighbor
+feature_columns:
+  - current_requests_per_second
+  - request_rate_lag_1
+  - request_rate_rolling_mean
+  - cpu_utilization_ratio
+  - p95_latency_seconds
+  - error_ratio
+  - current_replicas
+regularization: 0.000001
+minimum_training_rows: 20
+categorical_feature_column: scenario
+fallback_feature_column: current_requests_per_second
+maximum_normalized_distance: 1.0

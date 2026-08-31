@@ -1,0 +1,51 @@
+{
+  "collection_interval_seconds": 30,
+  "collection_start": "2026-07-25T09:00:00Z",
+  "columns": [
+    "timestamp",
+    "workload",
+    "requests_per_second",
+    "cpu_utilization_ratio",
+    "memory_working_set_bytes",
+    "p95_latency_seconds",
+    "error_ratio",
+    "replicas",
+    "scaling_event",
+    "scenario",
+    "collection_interval_seconds",
+    "data_source",
+    "run_status"
+  ],
+  "dataset_seed": "deterministic-scenario-profile-v1",
+  "files": [
+    {
+      "path": "normal.csv",
+      "records": 40,
+      "scenario": "normal"
+    },
+    {
+      "path": "progressive.csv",
+      "records": 40,
+      "scenario": "progressive"
+    },
+    {
+      "path": "spike.csv",
+      "records": 40,
+      "scenario": "spike"
+    },
+    {
+      "path": "sustained.csv",
+      "records": 40,
+      "scenario": "sustained"
+    },
+    {
+      "path": "recovery.csv",
+      "records": 40,
+      "scenario": "recovery"
+    }
+  ],
+  "limitation": "This checked-in starter dataset is deterministic synthetic data. Replace it with Prometheus exports before model evaluation.",
+  "records_per_scenario": 40,
+  "schema_version": "1.0.0",
+  "source_commit": "189200ea971ade72f1dbc9dd0624f2b09274891e"
+}

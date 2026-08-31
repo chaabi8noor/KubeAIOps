@@ -1,0 +1,70 @@
+{
+  "checks": {
+    "duplicate_records": "passed",
+    "failed_test_runs": "passed",
+    "future_data_leakage": "not_applicable_before_feature_engineering",
+    "invalid_values_and_units": "passed",
+    "missing_timestamps": "passed",
+    "replica_alignment": "passed",
+    "scenario_and_label_consistency": "passed",
+    "scenario_boundaries": "passed",
+    "scrape_interval_consistency": "passed"
+  },
+  "cleaning": {
+    "forward_filled_values": 0,
+    "input_records": 200,
+    "output_records": 200,
+    "removed_exact_duplicates": 0
+  },
+  "record_count": 200,
+  "scenarios": [
+    {
+      "collection_interval_seconds": 30,
+      "end": "2026-07-25T09:19:30Z",
+      "records": 40,
+      "scenario": "normal",
+      "start": "2026-07-25T09:00:00Z",
+      "workload": "demo-workload"
+    },
+    {
+      "collection_interval_seconds": 30,
+      "end": "2026-07-25T09:40:30Z",
+      "records": 40,
+      "scenario": "progressive",
+      "start": "2026-07-25T09:21:00Z",
+      "workload": "demo-workload"
+    },
+    {
+      "collection_interval_seconds": 30,
+      "end": "2026-07-25T10:43:30Z",
+      "records": 40,
+      "scenario": "recovery",
+      "start": "2026-07-25T10:24:00Z",
+      "workload": "demo-workload"
+    },
+    {
+      "collection_interval_seconds": 30,
+      "end": "2026-07-25T10:01:30Z",
+      "records": 40,
+      "scenario": "spike",
+      "start": "2026-07-25T09:42:00Z",
+      "workload": "demo-workload"
+    },
+    {
+      "collection_interval_seconds": 30,
+      "end": "2026-07-25T10:22:30Z",
+      "records": 40,
+      "scenario": "sustained",
+      "start": "2026-07-25T10:03:00Z",
+      "workload": "demo-workload"
+    }
+  ],
+  "source_files": [
+    "normal.csv",
+    "progressive.csv",
+    "recovery.csv",
+    "spike.csv",
+    "sustained.csv"
+  ],
+  "valid": true
+}

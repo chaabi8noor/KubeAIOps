@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+.env
+.member3-venv/
+docs/evidence/member-3/k6-smoke-summary.json
+docs/evidence/member-3/load-tests/
+docs/evidence/member-3/recovery/
+docs/evidence/member-3/validation/*-events.txt
+docs/evidence/member-3/validation/*-pods.txt
+ml/capacity/data/interim/
+ml/capacity/data/raw/prometheus/

@@ -1,0 +1,11 @@
+groups:
+  - name: kubeaiops.capacity.recording
+    rules:
+      - record: kubeaiops:capacity:request_rate_5m
+        expr: sum by (workload) (rate(kubeaiops_workload_requests_total{namespace="kubeaiops",service="demo-workload"}[5m]))
+      - record: kubeaiops:capacity:p95_latency_5m
+        expr: histogram_quantile(0.95, sum by (le) (rate(kubeaiops_workload_request_duration_seconds_bucket{namespace="kubeaiops",service="demo-workload"}[5m])))
+      - record: kubeaiops:capacity:error_ratio_5m
+        expr: sum(rate(kubeaiops_workload_errors_total{namespace="kubeaiops",service="demo-workload"}[5m])) / clamp_min(sum(rate(kubeaiops_workload_requests_total{namespace="kubeaiops",service="demo-workload"}[5m])), 1)
+      - record: kubeaiops:capacity:recommendation_gap
+        expr: kubeaiops_capacity_recommendation_gap{namespace="kubeaiops",workload="demo-workload"}

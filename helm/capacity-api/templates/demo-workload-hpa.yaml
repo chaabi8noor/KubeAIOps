@@ -1,0 +1,30 @@
+{{- if and .Values.demoWorkload.enabled .Values.demoWorkload.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: demo-workload
+  labels:
+    app.kubernetes.io/name: demo-workload
+    app.kubernetes.io/component: workload-generation
+    app.kubernetes.io/part-of: kubeaiops
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-workload
+  minReplicas: {{ .Values.demoWorkload.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.demoWorkload.autoscaling.maxReplicas }}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.demoWorkload.autoscaling.scaleDownStabilizationWindowSeconds }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.demoWorkload.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

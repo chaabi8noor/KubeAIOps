@@ -1,0 +1,62 @@
+name: Capacity module validation
+
+on:
+  push:
+    paths:
+      - "services/capacity-api/**"
+      - "services/demo-workload/**"
+      - "helm/capacity-api/**"
+      - "load-tests/capacity/**"
+      - ".github/workflows/capacity.yml"
+  pull_request:
+    paths:
+      - "services/capacity-api/**"
+      - "services/demo-workload/**"
+      - "helm/capacity-api/**"
+      - "load-tests/capacity/**"
+      - ".github/workflows/capacity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [capacity-api, demo-workload]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip -r services/${{ matrix.service }}/requirements-dev.txt
+      - name: Run tests
+        working-directory: services/${{ matrix.service }}
+        run: python -m pytest -q
+
+  helm-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - name: Lint chart
+        run: |
+          helm lint helm/capacity-api
+          helm lint helm/capacity-api --values helm/capacity-api/values-local.yaml
+      - name: Render local chart
+        run: helm template capacity-api helm/capacity-api --namespace kubeaiops --values helm/capacity-api/values-local.yaml > capacity-api-rendered.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: capacity-api-rendered-manifest
+          path: capacity-api-rendered.yaml
+
+  container-builds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Capacity API image
+        run: docker build --build-arg APP_VERSION=0.1.0 --tag kubeaiops/capacity-api:ci services/capacity-api
+      - name: Build demo workload image
+        run: docker build --build-arg APP_VERSION=0.1.0 --tag kubeaiops/demo-workload:ci services/demo-workload

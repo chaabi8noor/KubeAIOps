@@ -1,0 +1,4 @@
+version: features-v1
+horizon_steps: 2
+rolling_window_steps: 3
+train_fraction: 0.75

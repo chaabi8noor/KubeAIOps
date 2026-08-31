@@ -1,0 +1,14 @@
+{
+  "baseline_metrics": "ml/capacity/evaluation/baseline-v1/metrics.json",
+  "baseline_metrics_sha256": "97f9662233ff95ca0cd3e3810abf0cd9c4148d4314f39cafc7768bbc18698dac",
+  "dataset_version": "capacity-observations-v1",
+  "feature_dataset": "ml/capacity/data/features/capacity-features-v1.csv",
+  "feature_dataset_sha256": "e91cf3bbd46b730dc088db854d38e240c0d4f7358837fee650410989db0db1e4",
+  "model_config": "ml/capacity/config/model.yaml",
+  "model_config_sha256": "ed356361bf7ddd4fce3c3f58718b888b7b1c0e7dab1696add965db9cfdf5ec6f",
+  "policy_config": "ml/capacity/config/replica-policy.yaml",
+  "policy_config_sha256": "ec70bfde90879080573f2d90aeb365209d8cb6bf7090df5fee8b403c1cef250f",
+  "source_commit": "5fddf671b6fd34f8a3c9a2af9ef6b0205634ab01",
+  "test_rows": 45,
+  "training_rows": 135
+}

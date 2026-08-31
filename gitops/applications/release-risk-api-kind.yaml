@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: release-risk-api-kind
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: release-risk-api
+    app.kubernetes.io/component: release-management
+    app.kubernetes.io/part-of: kubeaiops
+spec:
+  project: kubeaiops
+  source:
+    repoURL: https://gitlab.com/kubeaiops/kubeaiops-platform.git
+    targetRevision: member2/containerize-and-deploy
+    path: member-2-release/helm/release-risk-api
+    helm:
+      releaseName: release-risk-api
+      parameters:
+        - name: image.tag
+          value: 95e5aef
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeaiops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

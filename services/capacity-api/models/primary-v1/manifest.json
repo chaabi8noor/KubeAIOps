@@ -1,0 +1,12 @@
+{
+  "files": {
+    "model-version.json": "36c608cd104d5b16ebaf24600d98563ef53233835130fb9ebad6cd8ac69404c1",
+    "model.json": "c3e04188124f97cceca5fca9bd44f7f4aff611f72ae915c5ac3d16d9b93bb868",
+    "preprocessor.json": "c9d6ae84195ce1a8c7cc50846ab83147bc272b610daa5df851b6d98e10fbae42",
+    "replica-policy.yaml": "ec70bfde90879080573f2d90aeb365209d8cb6bf7090df5fee8b403c1cef250f",
+    "training-config.json": "bf16ef93880ab7d6dfede1d350808035c1ea8a8ffc503e5e708bc3bb8afc8a91",
+    "training-metadata.json": "a20a7697294c711ad8569d8160a0e3b37532ff8cd5131d8f6777adc391e0c139"
+  },
+  "format_version": "capacity-api-model-package/v1",
+  "model_version": "capacity-primary-v1"
+}
