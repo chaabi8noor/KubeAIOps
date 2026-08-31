@@ -8,6 +8,7 @@ The Member 3 module provides a local, reproducible capacity-management thin slic
 - a contract-aligned `capacity-api` recommendation service;
 - non-root Docker images, Helm deployment, initial HPAs, PromQL/rules, and a first Grafana dashboard;
 - a GitLab CI pipeline, Argo CD project/application definitions, and k6 validation scripts.
+- versioned local Argo CD applications for the capacity, infrastructure-anomaly, and release-risk services.
 - five parameterized k6 load scenarios and a protected pod-recovery test;
 - a deterministic raw-to-processed dataset pipeline, validation report, and Prometheus extractor.
 - leakage-safe forecasting features, a persistence baseline, a bounded replica policy, and saved baseline evaluation evidence.
