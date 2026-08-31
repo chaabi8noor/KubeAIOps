@@ -81,14 +81,22 @@ The application enables pruning and self-healing. To verify drift correction, ma
 
 `gitops/applications/capacity-api-kind.yaml` is a separate, versioned Argo CD Application for a local Kind rehearsal. It intentionally uses `values-local.yaml`, which expects the locally built Capacity API and demo-workload images to be loaded into the `kubeaiops` Kind cluster. It does not replace the staging application.
 
+The same rehearsal includes `anomaly-api-kind.yaml` and `release-risk-api-kind.yaml`. They consume the completed Member 1 and Member 2 Helm charts from their GitLab branches. The anomaly application forces `image.pullPolicy: Never` for a locally loaded image; the release-risk application selects the immutable `95e5aef` image tag. Neither application changes a teammate-owned branch.
+
 After Argo CD is installed in the dedicated local cluster, use the following sequence:
 
 ```bash
 make kind-load
 kubectl apply -f gitops/projects/kubeaiops.yaml
 kubectl apply -f gitops/applications/capacity-api-kind.yaml
+kubectl apply -f gitops/applications/anomaly-api-kind.yaml
+kubectl apply -f gitops/applications/release-risk-api-kind.yaml
 argocd app wait capacity-api-kind --health --sync --timeout 300
+argocd app wait anomaly-api-kind --health --sync --timeout 300
+argocd app wait release-risk-api-kind --health --sync --timeout 300
 kubectl -n kubeaiops get deployments,services,hpa,pdb
 ```
 
-This rehearsal validates the same Git source, branch, Helm chart, and automated synchronization policy as the managed deployment while avoiding an external image-registry dependency.
+Install a Prometheus Operator before synchronizing `anomaly-api-kind`, because its completed Helm chart declares a `ServiceMonitor`. Load the Member 1 and Member 2 images into Kind before synchronization; this keeps the rehearsal reproducible even when registry access is unavailable.
+
+This rehearsal validates the Git sources, branches, Helm charts, and automated synchronization policies for the three services while avoiding an external image-registry dependency.

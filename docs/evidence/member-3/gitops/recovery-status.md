@@ -11,8 +11,10 @@ The versioned GitOps inputs are ready for a cluster that has Argo CD and authori
 - `gitops/projects/kubeaiops.yaml`
 - `gitops/applications/capacity-api.yaml`
 - `gitops/applications/capacity-api-kind.yaml`
+- `gitops/applications/anomaly-api-kind.yaml`
+- `gitops/applications/release-risk-api-kind.yaml`
 - `helm/capacity-api/values-staging.yaml`
 - `helm/capacity-api/values-local.yaml`
 - [GitOps recovery procedure](../../../member-3/primary-model-and-gitops.md#gitops-recovery-procedure)
 
-Once Docker Desktop and a dedicated `kind-kubeaiops` cluster are available, build and load the local images, install and authorize Argo CD, apply the Project and `capacity-api-kind` Application, introduce a controlled owned-resource drift, save the `OutOfSync` status, then recover a known-good revision and retain the final `Healthy` and `Synced` status.
+Once Docker Desktop and a dedicated `kind-kubeaiops` cluster are available, build and load the local images, install monitoring and authorize Argo CD, apply the Project and all three local Applications, introduce a controlled owned-resource drift, save the `OutOfSync` status, then recover a known-good revision and retain the final `Healthy` and `Synced` status.

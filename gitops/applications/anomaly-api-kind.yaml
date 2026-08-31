@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: anomaly-api-kind
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: anomaly-api
+    app.kubernetes.io/component: infrastructure-observability
+    app.kubernetes.io/part-of: kubeaiops
+spec:
+  project: kubeaiops
+  source:
+    repoURL: https://gitlab.com/kubeaiops/kubeaiops-platform.git
+    targetRevision: member1-infrastructure
+    path: member-1-infrastructure/helm/anomaly-api
+    helm:
+      releaseName: anomaly-api
+      parameters:
+        - name: image.pullPolicy
+          value: Never
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeaiops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

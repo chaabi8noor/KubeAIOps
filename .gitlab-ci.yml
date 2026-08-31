@@ -36,6 +36,7 @@ capacity-tests:
     - cd ../demo-workload && python -m pytest -q --junitxml=../../test-results/demo-workload.xml
     - cd ../../ml/capacity && PYTHONPATH=src python -m pytest -q --junitxml=../../test-results/capacity-model.xml
     - cd ../..
+    - python -m pytest -q tests --junitxml=test-results/gitops-applications.xml
     - python ml/capacity/scripts/build_features.py --input ml/capacity/data/processed/capacity-observations-v1.csv --config ml/capacity/config/features.yaml --output ml/capacity/data/features/capacity-features-v1.csv --metadata ml/capacity/data/features/features-v1-metadata.json --source-commit "$CI_COMMIT_SHA"
     - python ml/capacity/scripts/evaluate_baseline.py --features ml/capacity/data/features/capacity-features-v1.csv --baseline-config ml/capacity/config/baseline.yaml --policy-config ml/capacity/config/replica-policy.yaml --output-dir ml/capacity/evaluation/baseline-v1
     - python ml/capacity/scripts/train_primary_model.py --features ml/capacity/data/features/capacity-features-v1.csv --model-config ml/capacity/config/model.yaml --policy-config ml/capacity/config/replica-policy.yaml --baseline-metrics ml/capacity/evaluation/baseline-v1/metrics.json --artifact-dir ml/capacity/artifacts/primary-v1 --evaluation-dir ml/capacity/evaluation/primary-v1 --dataset-version capacity-observations-v1 --source-commit "$CI_COMMIT_SHA"

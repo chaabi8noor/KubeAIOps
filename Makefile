@@ -45,6 +45,7 @@ test:
 	cd services/capacity-api && $(TEST_PYTHON) -m pytest -q
 	cd services/demo-workload && $(TEST_PYTHON) -m pytest -q
 	cd ml/capacity && PYTHONPATH=$(CURDIR)/ml/capacity/src $(TEST_PYTHON) -m pytest -q
+	$(TEST_PYTHON) -m pytest -q tests
 
 helm-lint:
 	helm lint $(CHART)
