@@ -114,6 +114,7 @@ monitoring:
     enabled: false
     interval: 15s
     scrapeTimeout: 10s
+    additionalLabels: {}
   prometheusRule:
     enabled: false
     recommendationGapThreshold: 2

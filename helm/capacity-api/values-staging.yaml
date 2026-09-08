@@ -9,5 +9,9 @@ demoWorkload:
 monitoring:
   serviceMonitor:
     enabled: true
+    additionalLabels:
+      release: monitoring
   prometheusRule:
     enabled: true
+    additionalLabels:
+      release: monitoring

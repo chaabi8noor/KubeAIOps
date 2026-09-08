@@ -5,6 +5,9 @@ metadata:
   name: capacity-api-rules
   labels:
     {{- include "capacity-api.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.prometheusRule.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   groups:
     - name: kubeaiops.capacity

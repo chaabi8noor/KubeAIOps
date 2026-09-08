@@ -5,6 +5,9 @@ metadata:
   name: capacity-api
   labels:
     {{- include "capacity-api.labels" . | nindent 4 }}
+    {{- with .Values.monitoring.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   namespaceSelector:
     matchNames:
