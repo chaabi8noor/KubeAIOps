@@ -57,10 +57,10 @@ helm-validation:
     - helm lint helm/capacity-api
     - helm lint helm/capacity-api --values helm/capacity-api/values-local.yaml
     - helm template capacity-api helm/capacity-api --namespace kubeaiops --values helm/capacity-api/values-staging.yaml > capacity-api-rendered.yaml
-    - grep -q 'kind: Deployment' capacity-api-rendered.yaml
-    - grep -q 'kind: PodDisruptionBudget' capacity-api-rendered.yaml
-    - grep -q 'kind: HorizontalPodAutoscaler' capacity-api-rendered.yaml
-    - grep -q 'kind: PrometheusRule' capacity-api-rendered.yaml
+    - "grep -q 'kind: Deployment' capacity-api-rendered.yaml"
+    - "grep -q 'kind: PodDisruptionBudget' capacity-api-rendered.yaml"
+    - "grep -q 'kind: HorizontalPodAutoscaler' capacity-api-rendered.yaml"
+    - "grep -q 'kind: PrometheusRule' capacity-api-rendered.yaml"
   artifacts:
     paths:
       - capacity-api-rendered.yaml
