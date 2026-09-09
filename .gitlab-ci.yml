@@ -122,7 +122,20 @@ capacity-container-smoke:
     - docker run -d --name capacity-api-smoke -p 8000:8000 "$CAPACITY_IMAGE"
     - until docker exec capacity-api-smoke python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=2)"; do sleep 2; done
     - docker exec capacity-api-smoke python -c "import json, urllib.request; body=json.load(urllib.request.urlopen('http://127.0.0.1:8000/api/v1/capacity/demo-workload/recommendation')); assert body['model_version']=='capacity-primary-v1'"
-    - test "$(docker inspect --format '{{.State.Health.Status}}' capacity-api-smoke)" = healthy
+    - |
+      for attempt in $(seq 1 30); do
+        health_status="$(docker inspect --format '{{.State.Health.Status}}' capacity-api-smoke)"
+        if [ "$health_status" = "healthy" ]; then
+          exit 0
+        fi
+        if [ "$health_status" = "unhealthy" ]; then
+          docker logs capacity-api-smoke
+          exit 1
+        fi
+        sleep 2
+      done
+      docker logs capacity-api-smoke
+      exit 1
   after_script:
     - docker logs capacity-api-smoke || true
     - docker rm -f capacity-api-smoke || true
