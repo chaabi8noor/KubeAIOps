@@ -26,3 +26,14 @@ Primary-model selection, API runtime, CI, Helm, alerting, and GitOps guidance ar
 Validation procedures and evidence expectations are in [docs/member-3/capacity-validation.md](docs/member-3/capacity-validation.md). Operations, handover, and demonstration material is in [docs/member-3/capacity-operations-runbook.md](docs/member-3/capacity-operations-runbook.md), [docs/member-3/capacity-handover.md](docs/member-3/capacity-handover.md), and [docs/member-3/capacity-demonstration.md](docs/member-3/capacity-demonstration.md).
 
 Cross-stream dependencies and the exact conditions for resuming paused integration work are tracked in [docs/member-3/integration-dependency-register.md](docs/member-3/integration-dependency-register.md).
+
+## Deployment environments
+
+| Environment | Purpose |
+| --- | --- |
+| Local/Kind | Development and quick validation with local images, `helm/capacity-api/values-local.yaml`, and the Kind configuration in `kind/local-cluster.yaml`. |
+| Shared/mentor | Reproducible deployment with the published Capacity API image, `helm/capacity-api/values-staging.yaml`, and the documented Prometheus/Grafana setup. |
+
+`values-local.yaml` is local-only: it references images built on the developer machine and uses `imagePullPolicy: Never`. The staging values reference the published image `registry.gitlab.com/kubeaiops/kubeaiops-platform/capacity-api:v0.2.0` and do not depend on local Docker images.
+
+Local dashboard and API URLs are served through Traefik while Docker and the Kind cluster are running. They are local-only URLs, not public endpoints, and do not require a long-running `kubectl port-forward` session.
