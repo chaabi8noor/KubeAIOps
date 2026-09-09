@@ -52,7 +52,9 @@ capacity-tests:
 
 helm-validation:
   stage: validate
-  image: alpine/helm:3.16.3
+  image:
+    name: alpine/helm:3.16.3
+    entrypoint: [""]
   script:
     - helm lint helm/capacity-api
     - helm lint helm/capacity-api --values helm/capacity-api/values-local.yaml
