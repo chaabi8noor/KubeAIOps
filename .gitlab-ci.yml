@@ -92,13 +92,15 @@ capacity-image:
 
 capacity-image-scan:
   stage: verify
-  image: aquasec/trivy:0.57.1
+  image:
+    name: aquasec/trivy:0.57.1
+    entrypoint: [""]
   services:
     - name: docker:29.5.3-dind
   needs:
     - capacity-image
   script:
-    - trivy image --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 --format template --template "@/contrib/gitlab.tpl" --output gl-container-scanning-report.json "$CAPACITY_IMAGE"
+    - trivy image --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD" --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 --format template --template "@/contrib/gitlab.tpl" --output gl-container-scanning-report.json "$CAPACITY_IMAGE"
   artifacts:
     when: always
     reports:
@@ -115,6 +117,7 @@ capacity-container-smoke:
   needs:
     - capacity-image
   script:
+    - docker login "$CI_REGISTRY" --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD"
     - docker pull "$CAPACITY_IMAGE"
     - docker run -d --name capacity-api-smoke -p 8000:8000 "$CAPACITY_IMAGE"
     - until docker exec capacity-api-smoke python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=2)"; do sleep 2; done
@@ -126,7 +129,9 @@ capacity-container-smoke:
 
 load-test-contract:
   stage: verify
-  image: grafana/k6:0.57.0
+  image:
+    name: grafana/k6:0.57.0
+    entrypoint: [""]
   script:
     - k6 inspect load-tests/capacity/smoke/k6-smoke.js
     - k6 inspect load-tests/capacity/normal/k6-normal.js
